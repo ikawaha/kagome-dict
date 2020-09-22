@@ -33,7 +33,7 @@ func (m multiSizeReaderAt) Size() int64{
 }
 
 // ReadAt reads len(p) bytes into p starting at offset off in the underlying input source.
-// It returns the number of bytes read (0 <= n <= len(p)) and any error encountered. 
+// It returns the number of bytes read (0 <= n <= len(p)) and any error encountered.
 func (m *multiSizeReaderAt) ReadAt(p []byte, off int64) (n int, err error) {
 	full := len(p)
 	if off >= m.size {
