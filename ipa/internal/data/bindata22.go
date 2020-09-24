@@ -17,7 +17,7 @@ func dictIpadictAw() (*asset, error) {
 		return nil, err
 	}
 
-	info := bindataFileInfo{name: "dict/ipadict.aw", size: 175443, mode: os.FileMode(420), modTime: time.Unix(1596545184, 0)}
+	info := bindataFileInfo{name: "dict/ipadict.aw", size: 175443, mode: os.FileMode(420), modTime: time.Unix(1600787007, 0)}
 	a := &asset{bytes: bytes, info: info}
 	return a, nil
 }
