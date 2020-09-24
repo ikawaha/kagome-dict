@@ -1,4 +1,4 @@
-A Dictionary of Kagome Japanese Morphological Analyzer v2
+A Dictionary of Kagome v2
 ===
 
 A dictionary package of [kagome v2](http://github.com/ikawaha/kagome/tree/v2). This software includes a binary and/or source version of data from

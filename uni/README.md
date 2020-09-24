@@ -1,4 +1,4 @@
-A Dictionary of Kagome Japanese Morphological Analyzer v2
+A Dictionary of Kagome v2
 ===
 
 A dictionary package of [kagome v2](http://github.com/ikawaha/kagome/tree/v2). 
@@ -15,7 +15,7 @@ which can be obtained from
 Features are information given to a word, such as follows:
 
 ```
-公園に行った
+公園に行ったex
 公園	名詞,普通名詞,一般,*,*,*,コウエン,公園,公園,コーエン,公園,コーエン,漢,*,*,*,*
 に	助詞,格助詞,*,*,*,*,ニ,に,に,ニ,に,ニ,和,*,*,*,*
 行っ	動詞,非自立可能,*,*,五段-カ行,連用形-促音便,イク,行く,行っ,イッ,行く,イク,和,*,*,*,*
