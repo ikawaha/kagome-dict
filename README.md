@@ -1,5 +1,6 @@
 Dictionary Library for Kagome v2
 ===
+![Go](https://github.com/ikawaha/kagome-dict/workflows/Go/badge.svg)
 
 This repository contains a dictionary library and dictionary data.
 Each dictionary data is maintained as a separate module.
