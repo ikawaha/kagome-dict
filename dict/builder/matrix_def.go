@@ -3,6 +3,7 @@ package builder
 import (
 	"bufio"
 	"fmt"
+	"io"
 	"os"
 	"strconv"
 	"strings"
@@ -21,8 +22,11 @@ func parseMatrixDefFile(path string) (*MatrixDef, error) {
 		return nil, err
 	}
 	defer file.Close()
+	return parseMatrix(file)
+}
 
-	scanner := bufio.NewScanner(file)
+func parseMatrix(r io.Reader) (*MatrixDef, error) {
+	scanner := bufio.NewScanner(r)
 	scanner.Scan()
 	line := scanner.Text()
 	dim := strings.Split(line, " ")
@@ -48,10 +52,18 @@ func parseMatrixDefFile(path string) (*MatrixDef, error) {
 		if err != nil {
 			return nil, fmt.Errorf("invalid format: %s, %s", err, line)
 		}
+		if row < 0 || row >= rowSize {
+			return nil, fmt.Errorf("invalid ID, right-id %d >= row size %d", row, rowSize)
+		}
+
 		col, err := strconv.ParseInt(ary[1], 10, 0)
 		if err != nil {
 			return nil, fmt.Errorf("invalid format: %s, %s", err, line)
 		}
+		if col < 0 || col >= colSize {
+			return nil, fmt.Errorf("invalid ID, left-id %d >= col size %d", col, colSize)
+		}
+
 		val, err := strconv.Atoi(ary[2])
 		if err != nil {
 			return nil, fmt.Errorf("invalid format: %s, %s", err, line)
