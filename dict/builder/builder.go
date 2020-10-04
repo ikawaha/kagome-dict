@@ -72,7 +72,18 @@ func Build(c *Config) (*dict.Dict, error) {
 		ContentsMeta: c.recordInfo.Meta,
 		Contents:     make([][]string, 0, len(records)),
 	}
-	keywords := []string{}
+
+	// ConnectionTable
+	matrix, err := parseMatrixDefFile(c.paths[0] + "/" + c.MatrixDefFileName)
+	if err != nil {
+		return nil, err
+	}
+	ret.Connection.Row = matrix.rowSize
+	ret.Connection.Col = matrix.colSize
+	ret.Connection.Vec = matrix.vec
+
+	// Words
+	var keywords []string
 	posMap := make(dict.POSMap)
 	for _, rec := range records {
 		keywords = append(keywords, rec[c.recordInfo.SurfaceIndex])
@@ -80,14 +91,14 @@ func Build(c *Config) (*dict.Dict, error) {
 		if err != nil {
 			return nil, err
 		}
-		if l > MaxInt16 {
+		if l >= int(matrix.colSize) || l > MaxInt16 {
 			return nil, fmt.Errorf("morph left ID %d > %d, record: %v", l, MaxInt16, rec)
 		}
 		r, err := strconv.Atoi(rec[c.recordInfo.RightIDIndex])
 		if err != nil {
 			return nil, err
 		}
-		if r > MaxInt16 {
+		if r >= int(matrix.rowSize) || r > MaxInt16 {
 			return nil, fmt.Errorf("morph right ID %d > %d, record: %v", r, MaxInt16, rec)
 		}
 		w, err := strconv.Atoi(rec[c.recordInfo.WeightIndex])
@@ -113,15 +124,6 @@ func Build(c *Config) (*dict.Dict, error) {
 		return nil, err
 	}
 	ret.Index = index
-
-	// ConnectionTable
-	matrix, err := parseMatrixDefFile(c.paths[0] + "/" + c.MatrixDefFileName)
-	if err != nil {
-		return nil, err
-	}
-	ret.Connection.Row = matrix.rowSize
-	ret.Connection.Col = matrix.colSize
-	ret.Connection.Vec = matrix.vec
 
 	// CharDef
 	def, err := parseCharClassDefFile(c.paths[0] + "/" + c.CharDefFileName)
