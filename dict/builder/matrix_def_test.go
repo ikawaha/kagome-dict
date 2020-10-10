@@ -31,7 +31,10 @@ func Test_parseMatrix(t *testing.T) {
 			want: &MatrixDef{
 				rowSize: 2,
 				colSize: 2,
-				vec:     []int16{1, 2, 3, 4},
+				vec: []int16{
+					1, 3,
+					2, 4,
+				},
 			},
 			wantErr: false,
 		},
@@ -51,7 +54,11 @@ func Test_parseMatrix(t *testing.T) {
 			want: &MatrixDef{
 				rowSize: 2,
 				colSize: 3,
-				vec:     []int16{1, 2, 3, 4, 5, 6},
+				vec: []int16{
+					1, 4, //  --> row
+					2, 5, //  |
+					3, 6, //  ↓ col
+				},
 			},
 			wantErr: false,
 		},
@@ -68,7 +75,9 @@ func Test_parseMatrix(t *testing.T) {
 			want: &MatrixDef{
 				rowSize: 3,
 				colSize: 1,
-				vec:     []int16{1, 2, 3},
+				vec: []int16{
+					1, 2, 3,
+				},
 			},
 			wantErr: false,
 		},
