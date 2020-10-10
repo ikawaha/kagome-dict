@@ -17,12 +17,12 @@ func Test_ConnectionTableAt(t *testing.T) {
 	ct.Vec = make([]int16, ct.Row*ct.Col)
 	for i := 0; i < row; i++ {
 		for j := 0; j < col; j++ {
-			ct.Vec[i*col+j] = int16(i*col + j)
+			ct.Vec[i+j*row] = int16(i + j*row)
 		}
 	}
 	for i := 0; i < row; i++ {
 		for j := 0; j < col; j++ {
-			expected := int16(i*col + j)
+			expected := int16(i + j*row)
 			if r := ct.At(i, j); r != expected {
 				t.Errorf("got %v, expected %v", r, expected)
 			}
@@ -35,7 +35,11 @@ func Test_ConnectionTableWriteTo(t *testing.T) {
 	ct := ConnectionTable{
 		Row: 2,
 		Col: 3,
-		Vec: []int16{11, 12, 13, 21, 22, 23},
+		Vec: []int16{
+			11, 21, // --> row
+			12, 22, // |
+			13, 23, // ↓ col
+		},
 	}
 	var b bytes.Buffer
 	n, err := ct.WriteTo(&b)
@@ -51,7 +55,11 @@ func Test_LoadConnectionTable(t *testing.T) {
 	src := ConnectionTable{
 		Row: 2,
 		Col: 3,
-		Vec: []int16{11, 12, 13, 21, 22, 23},
+		Vec: []int16{
+			11, 21, // --> row
+			12, 22, // |
+			13, 23, // ↓ col
+		},
 	}
 	var b bytes.Buffer
 	_, err := src.WriteTo(&b)

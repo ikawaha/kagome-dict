@@ -68,7 +68,7 @@ func parseMatrix(r io.Reader) (*MatrixDef, error) {
 		if err != nil {
 			return nil, fmt.Errorf("invalid format: %s, %s", err, line)
 		}
-		vec[row*colSize+col] = int16(val)
+		vec[col*rowSize+row] = int16(val) // transposed
 	}
 	if err := scanner.Err(); err != nil {
 		return nil, fmt.Errorf("invalid format: %s, %s", err, line)

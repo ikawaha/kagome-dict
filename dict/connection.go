@@ -13,7 +13,7 @@ type ConnectionTable struct {
 
 // At returns the connection cost of matrix[row, col].
 func (t *ConnectionTable) At(row, col int) int16 {
-	return t.Vec[t.Col*int64(row)+int64(col)]
+	return t.Vec[t.Row*int64(col)+int64(row)] // connection matrix is transposed
 }
 
 // WriteTo implements the io.WriterTo interface
