@@ -35,8 +35,8 @@ var (
 			dict.POSHierarchy:       4,
 			dict.InflectionalType:   4,
 			dict.InflectionalForm:   5,
-			dict.BaseFormIndex:      7,
-			dict.ReadingIndex:       6,
+			dict.BaseFormIndex:      10,
+//			dict.ReadingIndex:       6, // undefined
 			dict.PronunciationIndex: 9,
 		},
 	}
