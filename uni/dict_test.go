@@ -82,7 +82,7 @@ func Test_ContentsMeta(t *testing.T) {
 	if want, got := 0, d.ContentsMeta[dict.ReadingIndex]; want != int(got) { // undefined
 		t.Errorf("reading index: want %d, got %d", want, got)
 	}
-	if want, got := 7, d.ContentsMeta[dict.BaseFormIndex]; want != int(got) {
+	if want, got := 10, d.ContentsMeta[dict.BaseFormIndex]; want != int(got) {
 		t.Errorf("base form index: want %d, got %d", want, got)
 	}
 	if want, got := 9, d.ContentsMeta[dict.PronunciationIndex]; want != int(got) {
