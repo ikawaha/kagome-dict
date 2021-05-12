@@ -87,7 +87,7 @@ func parseCSVFile(path string, enc encoding.Encoding, colSize int) (Records, err
 			return nil, err
 		}
 		if colSize > 0 && len(rec) != colSize {
-			return nil, fmt.Errorf("invalid format csv: %v, want col size %d, got %d, %+v", path, colSize, len(ret), rec)
+			return nil, fmt.Errorf("invalid format csv: %v, want col size %d, got %d, %+v", path, colSize, len(rec), rec)
 		}
 		ret = append(ret, rec)
 	}
