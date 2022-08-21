@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"bytes"
 	"embed"
-	_ "embed"
 	"io/fs"
 	"sync"
 
