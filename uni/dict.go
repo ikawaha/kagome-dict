@@ -3,12 +3,11 @@ package uni
 import (
 	"archive/zip"
 	"bytes"
-	"fmt"
-	"sort"
+	"embed"
+	"io/fs"
 	"sync"
 
 	"github.com/ikawaha/kagome-dict/dict"
-	"github.com/ikawaha/kagome-dict/uni/internal/data"
 )
 
 type FeatureIndex = int
@@ -20,6 +19,7 @@ const (
 	// 行っ	動詞,非自立可能,*,*,五段-カ行,連用形-促音便,イク,行く,行っ,イッ,行く,イク,和,*,*,*,*
 	// た	助動詞,*,*,*,助動詞-タ,終止形-一般,タ,た,た,タ,た,タ,和,*,*,*,*
 	// EOS
+
 	// POSHierarchy represents part-of-speech hierarchy
 	// e.g. Columns 動詞,非自立可能,*,* are POSs which hierarchy depth is 4.
 	POSHierarchy = 4
@@ -51,7 +51,7 @@ const (
 	FForm = 16
 
 	// Aliases
-	//
+
 	// InflectionalType represents 活用型 (e.g. 五段-カ行), an alias for CType.
 	InflectionalType FeatureIndex = 4
 	// InflectionalForm represents 活用形 (e.g. 連用形-促音便), an alias for CForm.
@@ -92,24 +92,20 @@ func DictShrink() *dict.Dict {
 	return shrink.dict
 }
 
-func loadDict(full bool) (d *dict.Dict) {
-	pieces := data.AssetNames()
-	sort.Strings(pieces)
+//go:embed uni.dict
+var dictsrc embed.FS
 
-	rs := make([]dict.SizeReaderAt, 0, len(pieces))
-	for _, v := range pieces {
-		b, err := data.Asset(v)
-		if err != nil {
-			panic(fmt.Errorf("assert error, %q, %v", v, err))
-		}
-		rs = append(rs, bytes.NewReader(b))
-	}
-	r := dict.MultiSizeReaderAt(rs...)
-	zr, err := zip.NewReader(r, r.Size())
+func loadDict(full bool) *dict.Dict {
+	b, err := fs.ReadFile(dictsrc, "uni.dict")
 	if err != nil {
 		panic(err)
 	}
-	d, err = dict.Load(zr, full)
+	r := bytes.NewReader(b)
+	zr,err := zip.NewReader(r, r.Size())
+	if err != nil {
+		panic(err)
+	}
+	d, err := dict.Load(zr, full)
 	if err != nil {
 		panic(err)
 	}

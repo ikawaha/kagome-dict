@@ -8,7 +8,7 @@ import (
 
 const (
 	IPADictEntrySize = 392126 + 1
-	testDictPath     = "testdata/ipa.dict"
+	testDictPath     = "./ipa.dict"
 )
 
 func Test_DictShrink(t *testing.T) {
