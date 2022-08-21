@@ -70,6 +70,7 @@ type Option struct {
 	OutputFileName string
 }
 
+// NewOption create an option.
 // ContinueOnError ErrorHandling // Return a descriptive error.
 // ExitOnError                   // Call os.Exit(2).
 // PanicOnError                  // Call panic with a descriptive error.flag.ContinueOnError
