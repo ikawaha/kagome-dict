@@ -8,7 +8,7 @@ import (
 
 const (
 	UniDictEntrySize = 756466
-	testDictPath     = "testdata/uni.dict"
+	testDictPath     = "./uni.dict"
 )
 
 func Test_DictShrink(t *testing.T) {

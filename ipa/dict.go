@@ -3,12 +3,11 @@ package ipa
 import (
 	"archive/zip"
 	"bytes"
-	"fmt"
-	"sort"
+	"embed"
+	"io/fs"
 	"sync"
 
 	"github.com/ikawaha/kagome-dict/dict"
-	"github.com/ikawaha/kagome-dict/ipa/internal/data"
 )
 
 type FeatureIndex = int
@@ -20,6 +19,7 @@ const (
 	// 行っ	動詞,自立,*,*,五段・カ行促音便,連用タ接続,行く,イッ,イッ
 	// た	助動詞,*,*,*,特殊・タ,基本形,た,タ,タ
 	// EOS
+
 	// POSHierarchy represents part-of-speech hierarchy
 	// e.g. Columns 動詞,自立,*,* are POSs which hierarchy depth is 4.
 	POSHierarchy = 4
@@ -34,6 +34,7 @@ const (
 	// Pronunciation represents 発音 (e.g. コーエン)
 	Pronunciation = 8
 )
+
 
 type systemDict struct {
 	once sync.Once
@@ -65,24 +66,20 @@ func DictShrink() *dict.Dict {
 	return shrink.dict
 }
 
-func loadDict(full bool) (d *dict.Dict) {
-	pieces := data.AssetNames()
-	sort.Strings(pieces)
+//go:embed ipa.dict
+var dictsrc embed.FS
 
-	rs := make([]dict.SizeReaderAt, 0, len(pieces))
-	for _, v := range pieces {
-		b, err := data.Asset(v)
-		if err != nil {
-			panic(fmt.Errorf("assert error, %q, %v", v, err))
-		}
-		rs = append(rs, bytes.NewReader(b))
-	}
-	r := dict.MultiSizeReaderAt(rs...)
-	zr, err := zip.NewReader(r, r.Size())
+func loadDict(full bool) *dict.Dict {
+	b, err := fs.ReadFile(dictsrc, "ipa.dict")
 	if err != nil {
 		panic(err)
 	}
-	d, err = dict.Load(zr, full)
+	r := bytes.NewReader(b)
+	zr,err := zip.NewReader(r, r.Size())
+	if err != nil {
+		panic(err)
+	}
+	d, err := dict.Load(zr, full)
 	if err != nil {
 		panic(err)
 	}
