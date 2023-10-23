@@ -238,7 +238,7 @@ func (d *DoubleArray) expand() {
 		(*dst)[i].Check = int32(-(i + 1))
 	}
 
-	start := -(*d)[0].Check
+	start := -(*d)[rootID].Check
 	end := -(*dst)[start].Base
 	(*dst)[srcSize].Base = -end
 	(*dst)[start].Base = int32(-(dstSize - 1))
