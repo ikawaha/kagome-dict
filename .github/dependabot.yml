@@ -7,11 +7,17 @@ updates:
     ignore:
       - dependency-name: "kagome-dict/ipa"
       - dependency-name: "kagome-dict/uni"
+    reviewers:
+      - ikawaha
   - package-ecosystem: "gomod" # See documentation for possible values
     directory: "/ipa" # Location of package manifests
     schedule:
       interval: "daily"
+    reviewers:
+      - ikawaha
   - package-ecosystem: "gomod" # See documentation for possible values
     directory: "/uni" # Location of package manifests
     schedule:
       interval: "daily"
+    reviewers:
+      - ikawaha
