@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"sort"
 )
 
@@ -121,9 +120,9 @@ func ReadUnkDic(r io.Reader) (UnkDict, error) {
 	if err != nil {
 		return d, err
 	}
-	d.ContentsMeta =me
+	d.ContentsMeta = me
 
-	b, err := ioutil.ReadAll(r)
+	b, err := io.ReadAll(r)
 	if err != nil {
 		return d, err
 	}
