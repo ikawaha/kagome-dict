@@ -67,10 +67,9 @@ func TestDictName_bad_input(t *testing.T) {
 }
 
 func TestDictName_WriteTo(t *testing.T) {
-	// Nil writer should return error.
 	name := DictName("test_dict")
 
-	// Get gob encoded dictionary name.
+	// Nil writer should return error.
 	_, err := name.WriteTo(nil)
 
 	// Assert error.
