@@ -90,6 +90,17 @@ func Test_ContentsMeta(t *testing.T) {
 	}
 }
 
+func Test_Dict_get_dictionary_name(t *testing.T) {
+	d := Dict()
+
+	want := dictName
+	got := string(d.Name)
+
+	if want != got {
+		t.Errorf("want %s, got %s", want, got)
+	}
+}
+
 /*
 func Test_InflectionalType(t *testing.T) {
 	tnz, err := tokenizer.New(Dict())
