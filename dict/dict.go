@@ -24,6 +24,8 @@ const (
 	CharDefDictFileName = "chardef.dict"
 	// UnkDictFileName is the default filename of an unknown dict.
 	UnkDictFileName = "unk.dict"
+	// DictNameFileName is the default filename of a dictionary name.
+	DictNameFileName = "name.dict"
 )
 
 // Dict represents a dictionary of a tokenizer.
@@ -39,6 +41,7 @@ type Dict struct {
 	InvokeList   InvokeList
 	GroupList    GroupList
 	UnkDict      UnkDict
+	Name         DictName
 }
 
 // CharacterCategory returns the category of a rune.
@@ -125,6 +128,12 @@ func (d *Dict) loadUnkDict(r io.Reader) error {
 	return nil
 }
 
+func (d *Dict) loadDictName(r io.Reader) error {
+	def := ReadDictName(r)
+	d.Name = def
+	return nil
+}
+
 // LoadDictFile loads a dictionary from a file.
 func LoadDictFile(path string) (d *Dict, err error) {
 	r, err := zip.OpenReader(path)
@@ -156,6 +165,7 @@ var loaders = map[string]dictionaryPartLoader{
 	ConnectionDictFileName: (*Dict).loadConnectionDict,
 	CharDefDictFileName:    (*Dict).loadCharDefDict,
 	UnkDictFileName:        (*Dict).loadUnkDict,
+	DictNameFileName:       (*Dict).loadDictName,
 }
 
 // Load loads a dictionary from a zipped reader.
@@ -193,6 +203,7 @@ var dictionaryPartFiles = []string{
 	ConnectionDictFileName,
 	CharDefDictFileName,
 	UnkDictFileName,
+	DictNameFileName,
 }
 
 type dictionaryPartSaver func(Dict, io.Writer) error
@@ -206,6 +217,7 @@ var savers = map[string]dictionaryPartSaver{
 	ConnectionDictFileName: Dict.saveConnectionDict,
 	CharDefDictFileName:    Dict.saveCharDefDict,
 	UnkDictFileName:        Dict.saveUnkDict,
+	DictNameFileName:       Dict.saveName,
 }
 
 // Save saves a dictionary in a zipped format.
@@ -271,5 +283,10 @@ func (d Dict) saveCharDefDict(w io.Writer) error {
 
 func (d Dict) saveUnkDict(w io.Writer) error {
 	_, err := d.UnkDict.WriteTo(w)
+	return err
+}
+
+func (d Dict) saveName(w io.Writer) error {
+	_, err := d.Name.WriteTo(w)
 	return err
 }
