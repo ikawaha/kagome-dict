@@ -68,12 +68,17 @@ func newTestDict(t *testing.T) *Dict {
 				[]string{"bb1", "bb2", "bb3"},
 			},
 		},
+		Name: "testDict",
 	}
 }
 
 // save <--> load
 func Test_DictSaveLoad(t *testing.T) {
 	dict := newTestDict(t)
+
+	if nameDict := dict.Name; nameDict != "testDict" {
+		t.Fatalf("unexpected dict name, %v", nameDict)
+	}
 
 	var b bytes.Buffer
 	zw := zip.NewWriter(&b)
@@ -95,8 +100,8 @@ func Test_DictSaveLoad(t *testing.T) {
 	}
 
 	if !reflect.DeepEqual(dict, got) {
-		t.Errorf("want %+v, got %+v", dict, got)
-		fmt.Printf("%T\n", got.ContentsMeta)
-		fmt.Printf("%T\n", dict.ContentsMeta)
+		t.Errorf("\nwant %+v\ngot %+v\n", dict, got)
+		fmt.Printf("got type: %T\n", got.ContentsMeta)
+		fmt.Printf("want type: %T\n", dict.ContentsMeta)
 	}
 }
