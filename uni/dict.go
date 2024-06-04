@@ -10,9 +10,9 @@ import (
 	"github.com/ikawaha/kagome-dict/dict"
 )
 
-// dictName represents a dictionary name to identify.
-// You can retrieve this name via dict.Dict.Name field.
-const dictName = "Uni"
+// DictName represents a dictionary name to identify.
+// You can retrieve this name via dict.Info.Name field.
+const DictName = "Uni"
 
 type FeatureIndex = int
 
@@ -112,8 +112,5 @@ func loadDict(full bool) *dict.Dict {
 	if err != nil {
 		panic(err)
 	}
-
-	d.Name = dict.DictName(dictName)
-
 	return d
 }

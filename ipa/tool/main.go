@@ -10,6 +10,7 @@ import (
 
 	"github.com/ikawaha/kagome-dict/dict"
 	"github.com/ikawaha/kagome-dict/dict/builder"
+	"github.com/ikawaha/kagome-dict/ipa"
 	"golang.org/x/text/encoding/japanese"
 )
 
@@ -111,7 +112,7 @@ func Run(args []string) error {
 		opt.flagSet.PrintDefaults()
 		return fmt.Errorf("%s, %v", CommandName, err)
 	}
-	config := builder.NewConfig(opt.DictPath, opt.OtherPath, FileEncoding, &RecordInfo, &UnkRecordInfo)
+	config := builder.NewConfig(ipa.DictName, opt.DictPath, opt.OtherPath, FileEncoding, &RecordInfo, &UnkRecordInfo)
 	dict, err := builder.Build(config)
 	if err != nil {
 		return fmt.Errorf("build failed: %v", err)

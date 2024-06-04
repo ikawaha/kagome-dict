@@ -6,71 +6,71 @@ import (
 )
 
 func TestDictName_golden(t *testing.T) {
-	rawName := DictName("test_dict")
+	in := Info{Name: "test_dict"}
 
 	// Get gob encoded dictionary name.
 	var gobName bytes.Buffer
-	if _, err := rawName.WriteTo(&gobName); err != nil {
+	if _, err := in.WriteTo(&gobName); err != nil {
 		t.Errorf("failed to get encoded name data: %v", err)
 	}
 
 	// Decode gob encoded dictionary name.
-	decName := ReadDictName(&gobName)
+	out := ReadDictInfo(&gobName)
 
 	// Assert be equal.
-	if string(rawName) != string(decName) {
-		t.Errorf("want %v, got %v", rawName, decName)
+	if in.Name != out.Name {
+		t.Errorf("want %v, got %v", in, out)
 	}
 }
 
 func TestDictName_bad_input(t *testing.T) {
 	t.Run("empty name", func(t *testing.T) {
-		name := DictName("")
+		in := Info{Name: ""}
 
 		// Get gob encoded dictionary name.
 		var gobName bytes.Buffer
-		if _, err := name.WriteTo(&gobName); err != nil {
+		if _, err := in.WriteTo(&gobName); err != nil {
 			t.Errorf("failed to encode dict name: %v", err)
 		}
 
 		// Decode gob encoded dictionary name.
-		got := string(ReadDictName(&gobName))
+		got := ReadDictInfo(&gobName)
 
 		// Assert be equal to default name.
 		want := UndefinedDictName
-		if want != got {
-			t.Errorf("empty name should return default name. want %v, got %v", want, got)
+		if want != got.Name {
+			t.Errorf("empty name should return default name. want %v, got %v", want, got.Name)
 		}
 	})
 
 	t.Run("nil input", func(t *testing.T) {
 		// Nil input shuold return default name.
-		got := string(ReadDictName(nil))
+		got := ReadDictInfo(nil)
 
 		// Assert be equal to default name.
 		want := UndefinedDictName
-		if want != got {
+		if want != got.Name {
 			t.Errorf("nil input should return default name. want %v, got %v", want, got)
 		}
 	})
 
 	t.Run("bad gob data", func(t *testing.T) {
 		// Bad gob data should return default name.
-		got := string(ReadDictName(bytes.NewReader([]byte{0x00})))
+		got := ReadDictInfo(bytes.NewReader([]byte{0x00}))
 
 		// Assert be equal to default name.
 		want := UndefinedDictName
-		if want != got {
+		if want != got.Name {
 			t.Errorf("bad encoded data should return default name. want %v, got %v", want, got)
 		}
 	})
 }
 
 func TestDictName_WriteTo(t *testing.T) {
-	name := DictName("test_dict")
+	in := Info{Name: "test_dict"}
 
 	// Nil writer should return error.
-	_, err := name.WriteTo(nil)
+	_, err := in.WriteTo(nil)
 
 	// Assert error.
 	if err == nil {

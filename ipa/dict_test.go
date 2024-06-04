@@ -49,6 +49,9 @@ func Test_LoadDictFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error, %v", err)
 	}
+	if want, got := DictName, d.Info.Name; want != got {
+		t.Errorf("want %s, got %s", want, got)
+	}
 	if want, got := IPADictEntrySize, len(d.Morphs); want != got {
 		t.Errorf("want %d, got %d", want, got)
 	}
@@ -93,8 +96,8 @@ func Test_ContentsMeta(t *testing.T) {
 func Test_Dict_get_dictionary_name(t *testing.T) {
 	d := Dict()
 
-	want := dictName
-	got := string(d.Name)
+	want := DictName
+	got := d.Info.Name
 
 	if want != got {
 		t.Errorf("want %s, got %s", want, got)

@@ -7,41 +7,40 @@ import (
 	"io"
 )
 
-// DictName represents the name of the dictionary to identify.
-type DictName string
+// Info represents the dictionary info.
+type Info struct {
+	Name string
+}
 
 const UndefinedDictName = "unnamed dict"
 
-// ReadDictName reads gob encoded dictionary name and returns as DictName.
+// ReadDictInfo reads gob encoded dictionary info and returns it.
 //
 // For backward compatibility, if a dictionary name is not defined or empty, it
 // returns UndefinedDictName.
-func ReadDictName(r io.Reader) DictName {
+func ReadDictInfo(r io.Reader) Info {
 	if r == nil {
-		return UndefinedDictName
+		return Info{Name: UndefinedDictName}
 	}
 
-	var ret DictName
+	var name string
 	dec := gob.NewDecoder(r)
-	if err := dec.Decode(&ret); err != nil {
-		return UndefinedDictName
+	_ = dec.Decode(&name)
+	if name == "" {
+		name = UndefinedDictName
 	}
-	if string(ret) == "" {
-		return UndefinedDictName
-	}
-
-	return ret
+	return Info{Name: name}
 }
 
 // WriteTo implements the io.WriteTo interface.
-func (d DictName) WriteTo(w io.Writer) (n int64, err error) {
+func (d Info) WriteTo(w io.Writer) (n int64, err error) {
 	if w == nil {
 		return 0, errors.New("given writer is nil")
 	}
 
 	var b bytes.Buffer
 	enc := gob.NewEncoder(&b)
-	if err := enc.Encode(string(d)); err != nil {
+	if err := enc.Encode(d.Name); err != nil {
 		return 0, err
 	}
 	return b.WriteTo(w)

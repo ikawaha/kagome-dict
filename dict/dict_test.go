@@ -68,7 +68,7 @@ func newTestDict(t *testing.T) *Dict {
 				[]string{"bb1", "bb2", "bb3"},
 			},
 		},
-		Name: "testDict",
+		Info: Info{Name: "testDict"},
 	}
 }
 
@@ -76,7 +76,7 @@ func newTestDict(t *testing.T) *Dict {
 func Test_DictSaveLoad(t *testing.T) {
 	dict := newTestDict(t)
 
-	if nameDict := dict.Name; nameDict != "testDict" {
+	if nameDict := dict.Info.Name; nameDict != "testDict" {
 		t.Fatalf("unexpected dict name, %v", nameDict)
 	}
 
