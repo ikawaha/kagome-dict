@@ -13,8 +13,6 @@ type Info struct {
 	Src  string
 }
 
-const UndefinedDictName = "unnamed dict"
-
 // ReadDictInfo reads gob encoded dictionary info and returns it.
 //
 // For backward compatibility, if a dictionary name is not defined or empty, it
@@ -25,12 +23,13 @@ func ReadDictInfo(r io.Reader) *Info {
 	}
 	var name string
 	dec := gob.NewDecoder(r)
-	_ = dec.Decode(&name)
-	if name == "" {
-		name = UndefinedDictName
+	if err := dec.Decode(&name); err != nil {
+		return nil
 	}
 	var src string
-	_ = dec.Decode(&src)
+	if err := dec.Decode(&src); err != nil {
+		return nil
+	}
 	return &Info{Name: name, Src: src}
 }
 

@@ -35,33 +35,24 @@ func TestDictName_bad_input(t *testing.T) {
 
 		// Decode gob encoded dictionary name.
 		got := ReadDictInfo(&gobName)
-
-		// Assert be equal to default name.
-		want := UndefinedDictName
-		if want != got.Name {
-			t.Errorf("empty name should return default name. want %v, got %v", want, got.Name)
+		if got.Name != "" {
+			t.Errorf("empty name should return empty name. got %v", got)
 		}
 	})
 
 	t.Run("nil input", func(t *testing.T) {
 		// Nil input shuold return default name.
 		got := ReadDictInfo(nil)
-
-		// Assert be equal to default name.
-		want := UndefinedDictName
-		if want != got.Name {
-			t.Errorf("nil input should return default name. want %v, got %v", want, got)
+		if got != nil {
+			t.Errorf("nil input should return nil. got %v", got)
 		}
 	})
 
 	t.Run("bad gob data", func(t *testing.T) {
 		// Bad gob data should return default name.
 		got := ReadDictInfo(bytes.NewReader([]byte{0x00}))
-
-		// Assert be equal to default name.
-		want := UndefinedDictName
-		if want != got.Name {
-			t.Errorf("bad encoded data should return default name. want %v, got %v", want, got)
+		if got != nil {
+			t.Errorf("bad gob data should return nil. got %v", got)
 		}
 	})
 }
