@@ -115,7 +115,7 @@ func Run(args []string) error {
 	config := builder.NewConfig(opt.DictPath, opt.OtherPath, nil, &RecordInfo, &UnkRecordInfo)
 	config.AddDictInfo(&dict.Info{
 		Name: uni.DictName,
-		Src:  "unidic-mecab-2.1.2_src+patch",
+		Src:  "unidic-mecab-2.1.2_src+patch", // TODO to be able to set externally
 	})
 	dict, err := builder.Build(config)
 	if err != nil {
