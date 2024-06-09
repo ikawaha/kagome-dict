@@ -11,7 +11,7 @@ import (
 )
 
 // DictName represents a dictionary name to identify.
-// You can retrieve this name via dict.Info.Name field.
+// You can retrieve this name via dict.dictInfo.Name field.
 const DictName = "Uni"
 
 type FeatureIndex = int

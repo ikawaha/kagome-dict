@@ -49,7 +49,11 @@ func Test_LoadDictFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error, %v", err)
 	}
-	if want, got := DictName, d.Info.Name; want != got {
+	info := d.Info()
+	if want, got := DictName, info.Name; want != got {
+		t.Errorf("want %s, got %s", want, got)
+	}
+	if want, got := "unidic-mecab-2.1.2_src+patch", info.Src; want != got {
 		t.Errorf("want %s, got %s", want, got)
 	}
 	if want, got := UniDictEntrySize, len(d.Morphs); want != got {
@@ -95,11 +99,11 @@ func Test_ContentsMeta(t *testing.T) {
 
 func Test_Dict_get_dictionary_name(t *testing.T) {
 	d := Dict()
-
-	want := DictName
-	got := d.Info.Name
-
-	if want != got {
+	info := d.Info()
+	if want, got := DictName, info.Name; want != got {
+		t.Errorf("want %s, got %s", want, got)
+	}
+	if want, got := "unidic-mecab-2.1.2_src+patch", info.Src; want != got {
 		t.Errorf("want %s, got %s", want, got)
 	}
 }

@@ -68,7 +68,7 @@ func newTestDict(t *testing.T) *Dict {
 				[]string{"bb1", "bb2", "bb3"},
 			},
 		},
-		Info: Info{Name: "testDict"},
+		dictInfo: &Info{Name: "testDict", Src: "testDictSrc"},
 	}
 }
 
@@ -76,8 +76,11 @@ func newTestDict(t *testing.T) *Dict {
 func Test_DictSaveLoad(t *testing.T) {
 	dict := newTestDict(t)
 
-	if nameDict := dict.Info.Name; nameDict != "testDict" {
+	if nameDict := dict.dictInfo.Name; nameDict != "testDict" {
 		t.Fatalf("unexpected dict name, %v", nameDict)
+	}
+	if srcDict := dict.dictInfo.Src; srcDict != "testDictSrc" {
+		t.Fatalf("unexpected dict source, %v", srcDict)
 	}
 
 	var b bytes.Buffer

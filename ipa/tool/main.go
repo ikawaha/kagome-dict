@@ -112,7 +112,11 @@ func Run(args []string) error {
 		opt.flagSet.PrintDefaults()
 		return fmt.Errorf("%s, %v", CommandName, err)
 	}
-	config := builder.NewConfig(ipa.DictName, opt.DictPath, opt.OtherPath, FileEncoding, &RecordInfo, &UnkRecordInfo)
+	config := builder.NewConfig(opt.DictPath, opt.OtherPath, FileEncoding, &RecordInfo, &UnkRecordInfo)
+	config.AddDictInfo(&dict.Info{
+		Name: ipa.DictName,
+		Src:  "mecab-ipadic-2.7.0-20070801+patch", // TODO to be able to set externally
+	})
 	dict, err := builder.Build(config)
 	if err != nil {
 		return fmt.Errorf("build failed: %v", err)

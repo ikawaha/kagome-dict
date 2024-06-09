@@ -16,10 +16,12 @@ const MaxInt16 = 1<<15 - 1
 // Config represents the configuration of dictionary builder.
 type Config struct {
 	name       string
+	src        string
 	paths      []string
 	recordInfo *MorphRecordInfo
 	unkInfo    *UnkRecordInfo
 	enc        encoding.Encoding
+	dictInfo   *dict.Info
 
 	MatrixDefFileName string
 	CharDefFileName   string
@@ -27,10 +29,9 @@ type Config struct {
 }
 
 // NewConfig creates a configuration for dictionary builder.
-func NewConfig(name, path string, other []string, enc encoding.Encoding, info *MorphRecordInfo, unk *UnkRecordInfo) *Config {
+func NewConfig(path string, other []string, enc encoding.Encoding, info *MorphRecordInfo, unk *UnkRecordInfo) *Config {
 	paths := append([]string{path}, other...)
 	return &Config{
-		name:       name,
 		paths:      paths,
 		recordInfo: info,
 		unkInfo:    unk,
@@ -40,6 +41,10 @@ func NewConfig(name, path string, other []string, enc encoding.Encoding, info *M
 		CharDefFileName:   "char.def",
 		UnkDefFileName:    "unk.def",
 	}
+}
+
+func (c *Config) AddDictInfo(info *dict.Info) {
+	c.dictInfo = info
 }
 
 // Build builds a dictionary.
@@ -73,8 +78,8 @@ func Build(c *Config) (*dict.Dict, error) {
 		},
 		ContentsMeta: c.recordInfo.Meta,
 		Contents:     make([][]string, 0, len(records)),
-		Info:         dict.Info{Name: c.name},
 	}
+	ret.SetInfo(c.dictInfo)
 
 	// ConnectionTable
 	matrix, err := parseMatrixDefFile(c.paths[0] + "/" + c.MatrixDefFileName)

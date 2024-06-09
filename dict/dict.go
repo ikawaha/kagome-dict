@@ -41,7 +41,11 @@ type Dict struct {
 	InvokeList   InvokeList
 	GroupList    GroupList
 	UnkDict      UnkDict
-	Info         Info
+	dictInfo     *Info
+}
+
+func (d *Dict) SetInfo(info *Info) {
+	d.dictInfo = info
 }
 
 // CharacterCategory returns the category of a rune.
@@ -129,8 +133,8 @@ func (d *Dict) loadUnkDict(r io.Reader) error {
 }
 
 func (d *Dict) loadDictInfo(r io.Reader) error {
-	def := ReadDictInfo(r)
-	d.Info.Name = def.Name
+	info := ReadDictInfo(r)
+	d.dictInfo = info
 	return nil
 }
 
@@ -287,6 +291,13 @@ func (d Dict) saveUnkDict(w io.Writer) error {
 }
 
 func (d Dict) saveInfo(w io.Writer) error {
-	_, err := d.Info.WriteTo(w)
+	if d.dictInfo == nil {
+		return nil
+	}
+	_, err := d.dictInfo.WriteTo(w)
 	return err
+}
+
+func (d Dict) Info() *Info {
+	return d.dictInfo
 }

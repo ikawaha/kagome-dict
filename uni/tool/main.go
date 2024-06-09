@@ -112,7 +112,11 @@ func Run(args []string) error {
 		opt.flagSet.PrintDefaults()
 		return fmt.Errorf("%s, %v", CommandName, err)
 	}
-	config := builder.NewConfig(uni.DictName, opt.DictPath, opt.OtherPath, nil, &RecordInfo, &UnkRecordInfo)
+	config := builder.NewConfig(opt.DictPath, opt.OtherPath, nil, &RecordInfo, &UnkRecordInfo)
+	config.AddDictInfo(&dict.Info{
+		Name: uni.DictName,
+		Src:  "unidic-mecab-2.1.2_src+patch",
+	})
 	dict, err := builder.Build(config)
 	if err != nil {
 		return fmt.Errorf("build failed: %v", err)
