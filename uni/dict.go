@@ -10,16 +10,19 @@ import (
 	"github.com/ikawaha/kagome-dict/dict"
 )
 
+// DictName represents a dictionary name to identify.
+// You can retrieve this name via dict.dictInfo.Name field.
+const DictName = "Uni"
+
 type FeatureIndex = int
 
+// Features are information given to a word, such as follows:
+// 公園	名詞,普通名詞,一般,*,*,*,コウエン,公園,公園,コーエン,公園,コーエン,漢,*,*,*,*
+// に	助詞,格助詞,*,*,*,*,ニ,に,に,ニ,に,ニ,和,*,*,*,*
+// 行っ	動詞,非自立可能,*,*,五段-カ行,連用形-促音便,イク,行く,行っ,イッ,行く,イク,和,*,*,*,*
+// た	助動詞,*,*,*,助動詞-タ,終止形-一般,タ,た,た,タ,た,タ,和,*,*,*,*
+// EOS
 const (
-	// Features are information given to a word, such as follows:
-	// 公園	名詞,普通名詞,一般,*,*,*,コウエン,公園,公園,コーエン,公園,コーエン,漢,*,*,*,*
-	// に	助詞,格助詞,*,*,*,*,ニ,に,に,ニ,に,ニ,和,*,*,*,*
-	// 行っ	動詞,非自立可能,*,*,五段-カ行,連用形-促音便,イク,行く,行っ,イッ,行く,イク,和,*,*,*,*
-	// た	助動詞,*,*,*,助動詞-タ,終止形-一般,タ,た,た,タ,た,タ,和,*,*,*,*
-	// EOS
-
 	// POSHierarchy represents part-of-speech hierarchy
 	// e.g. Columns 動詞,非自立可能,*,* are POSs which hierarchy depth is 4.
 	POSHierarchy = 4
@@ -101,7 +104,7 @@ func loadDict(full bool) *dict.Dict {
 		panic(err)
 	}
 	r := bytes.NewReader(b)
-	zr,err := zip.NewReader(r, r.Size())
+	zr, err := zip.NewReader(r, r.Size())
 	if err != nil {
 		panic(err)
 	}

@@ -24,6 +24,8 @@ const (
 	CharDefDictFileName = "chardef.dict"
 	// UnkDictFileName is the default filename of an unknown dict.
 	UnkDictFileName = "unk.dict"
+	// DictInfoFileName is the file name of a dictionary info.
+	DictInfoFileName = "dict.info"
 )
 
 // Dict represents a dictionary of a tokenizer.
@@ -39,10 +41,15 @@ type Dict struct {
 	InvokeList   InvokeList
 	GroupList    GroupList
 	UnkDict      UnkDict
+	dictInfo     *Info
+}
+
+func (d *Dict) SetInfo(info *Info) {
+	d.dictInfo = info
 }
 
 // CharacterCategory returns the category of a rune.
-func (d Dict) CharacterCategory(r rune) byte {
+func (d *Dict) CharacterCategory(r rune) byte {
 	if int(r) < len(d.CharCategory) {
 		return d.CharCategory[r]
 	}
@@ -125,6 +132,12 @@ func (d *Dict) loadUnkDict(r io.Reader) error {
 	return nil
 }
 
+func (d *Dict) loadDictInfo(r io.Reader) error {
+	info := ReadDictInfo(r)
+	d.dictInfo = info
+	return nil
+}
+
 // LoadDictFile loads a dictionary from a file.
 func LoadDictFile(path string) (d *Dict, err error) {
 	r, err := zip.OpenReader(path)
@@ -156,6 +169,7 @@ var loaders = map[string]dictionaryPartLoader{
 	ConnectionDictFileName: (*Dict).loadConnectionDict,
 	CharDefDictFileName:    (*Dict).loadCharDefDict,
 	UnkDictFileName:        (*Dict).loadUnkDict,
+	DictInfoFileName:       (*Dict).loadDictInfo,
 }
 
 // Load loads a dictionary from a zipped reader.
@@ -193,6 +207,7 @@ var dictionaryPartFiles = []string{
 	ConnectionDictFileName,
 	CharDefDictFileName,
 	UnkDictFileName,
+	DictInfoFileName,
 }
 
 type dictionaryPartSaver func(Dict, io.Writer) error
@@ -206,6 +221,7 @@ var savers = map[string]dictionaryPartSaver{
 	ConnectionDictFileName: Dict.saveConnectionDict,
 	CharDefDictFileName:    Dict.saveCharDefDict,
 	UnkDictFileName:        Dict.saveUnkDict,
+	DictInfoFileName:       Dict.saveInfo,
 }
 
 // Save saves a dictionary in a zipped format.
@@ -272,4 +288,16 @@ func (d Dict) saveCharDefDict(w io.Writer) error {
 func (d Dict) saveUnkDict(w io.Writer) error {
 	_, err := d.UnkDict.WriteTo(w)
 	return err
+}
+
+func (d Dict) saveInfo(w io.Writer) error {
+	if d.dictInfo == nil {
+		return nil
+	}
+	_, err := d.dictInfo.WriteTo(w)
+	return err
+}
+
+func (d Dict) Info() *Info {
+	return d.dictInfo
 }

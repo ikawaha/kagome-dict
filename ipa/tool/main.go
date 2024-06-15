@@ -10,6 +10,7 @@ import (
 
 	"github.com/ikawaha/kagome-dict/dict"
 	"github.com/ikawaha/kagome-dict/dict/builder"
+	"github.com/ikawaha/kagome-dict/ipa"
 	"golang.org/x/text/encoding/japanese"
 )
 
@@ -112,6 +113,10 @@ func Run(args []string) error {
 		return fmt.Errorf("%s, %v", CommandName, err)
 	}
 	config := builder.NewConfig(opt.DictPath, opt.OtherPath, FileEncoding, &RecordInfo, &UnkRecordInfo)
+	config.AddDictInfo(&dict.Info{
+		Name: ipa.DictName,
+		Src:  "mecab-ipadic-2.7.0-20070801+patch", // TODO to be able to set externally
+	})
 	dict, err := builder.Build(config)
 	if err != nil {
 		return fmt.Errorf("build failed: %v", err)

@@ -10,16 +10,19 @@ import (
 	"github.com/ikawaha/kagome-dict/dict"
 )
 
+// DictName represents a dictionary name to identify.
+// You can retrieve this name via dict.dictInfo.Name field.
+const DictName = "IPA"
+
 type FeatureIndex = int
 
+// Features are information given to a word, such as follows:
+// 公園	名詞,一般,*,*,*,*,公園,コウエン,コーエン
+// に	助詞,格助詞,一般,*,*,*,に,ニ,ニ
+// 行っ	動詞,自立,*,*,五段・カ行促音便,連用タ接続,行く,イッ,イッ
+// た	助動詞,*,*,*,特殊・タ,基本形,た,タ,タ
+// EOS
 const (
-	// Features are information given to a word, such as follows:
-	// 公園	名詞,一般,*,*,*,*,公園,コウエン,コーエン
-	// に	助詞,格助詞,一般,*,*,*,に,ニ,ニ
-	// 行っ	動詞,自立,*,*,五段・カ行促音便,連用タ接続,行く,イッ,イッ
-	// た	助動詞,*,*,*,特殊・タ,基本形,た,タ,タ
-	// EOS
-
 	// POSHierarchy represents part-of-speech hierarchy
 	// e.g. Columns 動詞,自立,*,* are POSs which hierarchy depth is 4.
 	POSHierarchy = 4
@@ -34,7 +37,6 @@ const (
 	// Pronunciation represents 発音 (e.g. コーエン)
 	Pronunciation = 8
 )
-
 
 type systemDict struct {
 	once sync.Once
@@ -75,7 +77,7 @@ func loadDict(full bool) *dict.Dict {
 		panic(err)
 	}
 	r := bytes.NewReader(b)
-	zr,err := zip.NewReader(r, r.Size())
+	zr, err := zip.NewReader(r, r.Size())
 	if err != nil {
 		panic(err)
 	}

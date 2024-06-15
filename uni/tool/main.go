@@ -10,6 +10,7 @@ import (
 
 	"github.com/ikawaha/kagome-dict/dict"
 	"github.com/ikawaha/kagome-dict/dict/builder"
+	"github.com/ikawaha/kagome-dict/uni"
 	"golang.org/x/text/encoding"
 )
 
@@ -31,12 +32,12 @@ var (
 		OtherContentsStartIndex: 8,
 		// extra
 		Meta: map[string]int8{
-			dict.POSStartIndex:      0,
-			dict.POSHierarchy:       4,
-			dict.InflectionalType:   4,
-			dict.InflectionalForm:   5,
-			dict.BaseFormIndex:      10,
-//			dict.ReadingIndex:       6, // undefined
+			dict.POSStartIndex:    0,
+			dict.POSHierarchy:     4,
+			dict.InflectionalType: 4,
+			dict.InflectionalForm: 5,
+			dict.BaseFormIndex:    10,
+			//			dict.ReadingIndex:       6, // undefined
 			dict.PronunciationIndex: 9,
 		},
 	}
@@ -112,6 +113,10 @@ func Run(args []string) error {
 		return fmt.Errorf("%s, %v", CommandName, err)
 	}
 	config := builder.NewConfig(opt.DictPath, opt.OtherPath, nil, &RecordInfo, &UnkRecordInfo)
+	config.AddDictInfo(&dict.Info{
+		Name: uni.DictName,
+		Src:  "unidic-mecab-2.1.2_src+patch", // TODO to be able to set externally
+	})
 	dict, err := builder.Build(config)
 	if err != nil {
 		return fmt.Errorf("build failed: %v", err)
