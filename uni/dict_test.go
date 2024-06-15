@@ -50,6 +50,9 @@ func Test_LoadDictFile(t *testing.T) {
 		t.Fatalf("unexpected error, %v", err)
 	}
 	info := d.Info()
+	if info == nil {
+		t.Fatalf("info is nil")
+	}
 	if want, got := DictName, info.Name; want != got {
 		t.Errorf("want %s, got %s", want, got)
 	}
