@@ -1,6 +1,8 @@
 module tool
 
-go 1.19
+go 1.23.0
+
+toolchain go1.24.1
 
 replace (
 	github.com/ikawaha/kagome-dict => ./../..
@@ -10,5 +12,5 @@ replace (
 require (
 	github.com/ikawaha/kagome-dict v1.0.10
 	github.com/ikawaha/kagome-dict/ipa v1.0.11
-	golang.org/x/text v0.15.0
+	golang.org/x/text v0.23.0
 )
