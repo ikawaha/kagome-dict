@@ -1,14 +1,16 @@
 module tool
 
-go 1.19
+go 1.23.0
+
+toolchain go1.24.1
 
 replace (
-    github.com/ikawaha/kagome-dict => ./../..
-    github.com/ikawaha/kagome-dict/uni => ./..
+	github.com/ikawaha/kagome-dict => ./../..
+	github.com/ikawaha/kagome-dict/uni => ./..
 )
 
 require (
 	github.com/ikawaha/kagome-dict v1.0.10
 	github.com/ikawaha/kagome-dict/uni v1.0.10
-	golang.org/x/text v0.15.0
+	golang.org/x/text v0.23.0
 )
