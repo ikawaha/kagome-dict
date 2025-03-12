@@ -45,10 +45,8 @@ func ReadConnectionTable(r io.Reader) (ConnectionTable, error) {
 		return ret, err
 	}
 	ret.Vec = make([]int16, ret.Row*ret.Col)
-	for i := range ret.Vec {
-		if err := binary.Read(r, binary.LittleEndian, &ret.Vec[i]); err != nil {
-			return ret, err
-		}
+	if err := binary.Read(r, binary.LittleEndian, &ret.Vec); err != nil {
+		return ret, err
 	}
 	return ret, nil
 }
