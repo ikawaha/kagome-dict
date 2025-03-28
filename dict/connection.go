@@ -6,6 +6,8 @@ import (
 )
 
 // ConnectionTable represents a connection matrix of morphs.
+//
+//nolint:recvcheck
 type ConnectionTable struct {
 	Row, Col int64
 	Vec      []int16
@@ -17,7 +19,7 @@ func (t *ConnectionTable) At(row, col int) int16 {
 }
 
 // WriteTo implements the io.WriterTo interface
-func (t ConnectionTable) WriteTo(w io.Writer) (n int64, err error) {
+func (t ConnectionTable) WriteTo(w io.Writer) (n int64, err error) { //nolint:nonamedreturns
 	if err := binary.Write(w, binary.LittleEndian, t.Row); err != nil {
 		return n, err
 	}
