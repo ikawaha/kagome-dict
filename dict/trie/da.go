@@ -2,7 +2,7 @@ package trie
 
 import (
 	"encoding/binary"
-	"fmt"
+	"errors"
 	"io"
 	"sort"
 )
@@ -15,6 +15,8 @@ const (
 )
 
 // DoubleArray represents the TRIE data structure.
+//
+//nolint:recvcheck
 type DoubleArray []struct {
 	Base, Check int32
 }
@@ -37,7 +39,7 @@ func BuildWithIDs(keywords []string, ids []int) (DoubleArray, error) {
 	d := DoubleArray{}
 	d.init()
 	if len(keywords) != len(ids) {
-		return d, fmt.Errorf("invalid arguments")
+		return d, errors.New("invalid arguments")
 	}
 	if len(keywords) == 0 {
 		return d, nil
@@ -63,7 +65,7 @@ func BuildWithIDs(keywords []string, ids []int) (DoubleArray, error) {
 }
 
 // Find searches TRIE by a given keyword and returns the id if found.
-func (d DoubleArray) Find(input string) (id int, ok bool) {
+func (d DoubleArray) Find(input string) (id int, ok bool) { //nolint:nonamedreturns
 	_, q, _, ok := d.search(input)
 	if !ok {
 		return
@@ -78,7 +80,7 @@ func (d DoubleArray) Find(input string) (id int, ok bool) {
 
 // CommonPrefixSearch finds keywords sharing common prefix in an input
 // and returns the ids and it's lengths if found.
-func (d DoubleArray) CommonPrefixSearch(input string) (ids, lens []int) {
+func (d DoubleArray) CommonPrefixSearch(input string) (ids, lens []int) { //nolint:nonamedreturns
 	var p, q int
 	bufLen := len(d)
 	for i, size := 0, len(input); i < size; i++ {
@@ -104,7 +106,7 @@ func (d DoubleArray) CommonPrefixSearch(input string) (ids, lens []int) {
 func (d DoubleArray) CommonPrefixSearchCallback(input string, callback func(id, l int)) {
 	var p, q int
 	bufLen := len(d)
-	for i := 0; i < len(input); i++ {
+	for i := range input {
 		if input[i] == terminator {
 			return
 		}
@@ -121,7 +123,7 @@ func (d DoubleArray) CommonPrefixSearchCallback(input string, callback func(id, 
 }
 
 // PrefixSearch returns the longest common prefix keyword in an input if found.
-func (d DoubleArray) PrefixSearch(input string) (id int, ok bool) {
+func (d DoubleArray) PrefixSearch(input string) (id int, ok bool) { //nolint:nonamedreturns
 	var p, q, i int
 	bufLen := len(d)
 	for size := len(input); i < size; i++ {
@@ -143,9 +145,9 @@ func (d DoubleArray) PrefixSearch(input string) (id int, ok bool) {
 }
 
 // WriteTo saves a double array.
-func (d DoubleArray) WriteTo(w io.Writer) (n int64, err error) {
+func (d DoubleArray) WriteTo(w io.Writer) (n int64, err error) { //nolint:nonamedreturns
 	sz := int64(len(d))
-	//fmt.Println("write data len:", sz)
+	// fmt.Println("write data len:", sz)
 	if err := binary.Write(w, binary.LittleEndian, sz); err != nil {
 		return n, err
 	}
@@ -169,7 +171,7 @@ func Read(r io.Reader) (DoubleArray, error) {
 	if err := binary.Read(r, binary.LittleEndian, &sz); err != nil {
 		return DoubleArray{}, err
 	}
-	//fmt.Println("read data len:", sz)
+	// fmt.Println("read data len:", sz)
 	d := make(DoubleArray, sz)
 	for i := range d {
 		if err := binary.Read(r, binary.LittleEndian, &d[i].Base); err != nil {
@@ -190,11 +192,11 @@ func (d *DoubleArray) init() {
 
 	bufLen := len(*d)
 	for i := 1; i < bufLen; i++ {
-		(*d)[i].Base = int32(-(i - 1))
-		(*d)[i].Check = int32(-(i + 1))
+		(*d)[i].Base = int32(-(i - 1))  //nolint:gosec //G115: integer overflow conversion int -> int32
+		(*d)[i].Check = int32(-(i + 1)) //nolint:gosec //G115: integer overflow conversion int -> int32
 	}
 
-	(*d)[1].Base = int32(-(bufLen - 1))
+	(*d)[1].Base = int32(-(bufLen - 1)) //nolint:gosec //G115: integer overflow conversion int -> int32
 	(*d)[bufLen-1].Check = int32(-1)
 }
 
@@ -214,10 +216,10 @@ func (d *DoubleArray) setBase(p, base int) {
 		(*d)[next].Base = (*d)[p].Base
 		(*d)[prev].Check = (*d)[p].Check
 	}
-	(*d)[p].Base = int32(base)
+	(*d)[p].Base = int32(base) //nolint:gosec //G115: integer overflow conversion int -> int32
 }
 
-func (d *DoubleArray) efficiency() (unspent int, size int, usageRate float64) {
+func (d *DoubleArray) efficiency() (unspent int, size int, usageRate float64) { //nolint:nonamedreturns
 	for _, pair := range *d {
 		if pair.Check < 0 {
 			unspent++
@@ -234,15 +236,15 @@ func (d *DoubleArray) expand() {
 	copy(*dst, *d)
 
 	for i := srcSize; i < dstSize; i++ {
-		(*dst)[i].Base = int32(-(i - 1))
-		(*dst)[i].Check = int32(-(i + 1))
+		(*dst)[i].Base = int32(-(i - 1))  //nolint:gosec //G115: integer overflow conversion int -> int32
+		(*dst)[i].Check = int32(-(i + 1)) //nolint:gosec //G115: integer overflow conversion int -> int32
 	}
 
 	start := -(*d)[rootID].Check
 	end := -(*dst)[start].Base
 	(*dst)[srcSize].Base = -end
-	(*dst)[start].Base = int32(-(dstSize - 1))
-	(*dst)[end].Check = int32(-srcSize)
+	(*dst)[start].Base = int32(-(dstSize - 1)) //nolint:gosec //G115: integer overflow conversion int -> int32
+	(*dst)[end].Check = int32(-srcSize)        //nolint:gosec //G115: integer overflow conversion int -> int32
 	(*dst)[dstSize-1].Check = -start
 
 	*d = *dst
@@ -266,13 +268,13 @@ func (d *DoubleArray) truncate() {
 	*d = *dst
 }
 
-func (d *DoubleArray) search(input string) (p, q, i int, ok bool) {
+func (d *DoubleArray) search(input string) (p, q, i int, ok bool) { //nolint:nonamedreturns
 	if len(input) == 0 {
 		return
 	}
 	bufLen := len(*d)
 	inpLen := len(input)
-	for i = 0; i < inpLen; i++ {
+	for i = range inpLen {
 		if input[i] == terminator {
 			return
 		}
@@ -297,8 +299,7 @@ func (d *DoubleArray) setCheck(p, check int) {
 
 	(*d)[next].Base = (*d)[p].Base
 	(*d)[prev].Check = (*d)[p].Check
-	(*d)[p].Check = int32(check)
-
+	(*d)[p].Check = int32(check) //nolint:gosec //G115: integer overflow conversion int -> int32
 }
 
 func (d *DoubleArray) seekAndMark(p int, chars []byte) { // chars != nil
@@ -356,9 +357,9 @@ func (d *DoubleArray) add(p, i int, branches []int, keywords []string, ids []int
 		q := int((*d)[p].Base) + int(ch)
 		if len(subtree[ch]) == 0 {
 			if len(ids) == 0 {
-				(*d)[q].Base = int32(-branches[0])
+				(*d)[q].Base = int32(-branches[0]) //nolint:gosec //G115: integer overflow conversion int -> int32
 			} else {
-				(*d)[q].Base = int32(-ids[branches[0]])
+				(*d)[q].Base = int32(-ids[branches[0]]) //nolint:gosec //G115: integer overflow conversion int -> int32
 			}
 		} else {
 			d.add(q, i+1, subtree[ch], keywords, ids)

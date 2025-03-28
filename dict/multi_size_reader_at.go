@@ -10,13 +10,14 @@ type SizeReaderAt interface {
 	Size() int64
 }
 
+//nolint:recvcheck
 type multiSizeReaderAt struct {
 	readers []SizeReaderAt
-	size  int64
+	size    int64
 }
 
 // MultiSizeReaderAt returns a SizeReaderAt that is the logical concatenation of the provided input readers.
-func MultiSizeReaderAt(rs ...SizeReaderAt) SizeReaderAt {
+func MultiSizeReaderAt(rs ...SizeReaderAt) *multiSizeReaderAt {
 	var size int64
 	for _, v := range rs {
 		size += v.Size()
@@ -28,24 +29,24 @@ func MultiSizeReaderAt(rs ...SizeReaderAt) SizeReaderAt {
 }
 
 // Size returns the size of the reader.
-func (m multiSizeReaderAt) Size() int64{
+func (m multiSizeReaderAt) Size() int64 {
 	return m.size
 }
 
 // ReadAt reads len(p) bytes into p starting at offset off in the underlying input source.
 // It returns the number of bytes read (0 <= n <= len(p)) and any error encountered.
-func (m *multiSizeReaderAt) ReadAt(p []byte, off int64) (n int, err error) {
+func (m *multiSizeReaderAt) ReadAt(p []byte, off int64) (n int, err error) { //nolint:nonamedreturns
 	full := len(p)
 	if off >= m.size {
 		return 0, io.EOF
 	}
-	for i:=0; i < len(m.readers) && len(p) !=0; i++{
-		if int(m.readers[i].Size()) < int(off){
+	for i := 0; i < len(m.readers) && len(p) != 0; i++ {
+		if int(m.readers[i].Size()) < int(off) {
 			off -= m.readers[i].Size()
 			continue
 		}
-		k, err :=m.readers[i].ReadAt(p, off)
-		n +=  k
+		k, err := m.readers[i].ReadAt(p, off)
+		n += k
 		if err != nil {
 			if err.Error() != "EOF" {
 				return n, err

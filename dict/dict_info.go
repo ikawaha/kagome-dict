@@ -34,7 +34,7 @@ func ReadDictInfo(r io.Reader) *Info {
 }
 
 // WriteTo implements the io.WriteTo interface.
-func (d Info) WriteTo(w io.Writer) (n int64, err error) {
+func (d Info) WriteTo(w io.Writer) (n int64, err error) { //nolint:nonamedreturns
 	if w == nil {
 		return 0, errors.New("given writer is nil")
 	}

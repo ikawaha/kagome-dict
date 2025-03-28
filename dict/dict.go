@@ -29,6 +29,8 @@ const (
 )
 
 // Dict represents a dictionary of a tokenizer.
+//
+//nolint:recvcheck
 type Dict struct {
 	Morphs       Morphs
 	POSTable     POSTable
@@ -59,7 +61,7 @@ func (d *Dict) CharacterCategory(r rune) byte {
 func (d *Dict) loadMorphsDict(r io.Reader) error {
 	m, err := ReadMorphs(r)
 	if err != nil {
-		return fmt.Errorf("dict initializer, Morphs: %v", err)
+		return fmt.Errorf("dict initializer, Morphs: %w", err)
 	}
 	d.Morphs = m
 	return nil
@@ -68,7 +70,7 @@ func (d *Dict) loadMorphsDict(r io.Reader) error {
 func (d *Dict) loadPOSDict(r io.Reader) error {
 	p, err := ReadPOSTable(r)
 	if err != nil {
-		return fmt.Errorf("dict initializer, POSs: %v", err)
+		return fmt.Errorf("dict initializer, POSs: %w", err)
 	}
 	d.POSTable = p
 	return nil
@@ -77,17 +79,16 @@ func (d *Dict) loadPOSDict(r io.Reader) error {
 func (d *Dict) loadContentsMeta(r io.Reader) error {
 	c, err := ReadContentsMeta(r)
 	if err != nil {
-		return fmt.Errorf("dict initializer, Contents meta: %v", err)
+		return fmt.Errorf("dict initializer, Contents meta: %w", err)
 	}
 	d.ContentsMeta = c
 	return nil
-
 }
 
 func (d *Dict) loadContentsDict(r io.Reader) error {
 	c, err := ReadContents(r)
 	if err != nil {
-		return fmt.Errorf("dict initializer, Contents: %v", err)
+		return fmt.Errorf("dict initializer, Contents: %w", err)
 	}
 	d.Contents = c
 	return nil
@@ -96,7 +97,7 @@ func (d *Dict) loadContentsDict(r io.Reader) error {
 func (d *Dict) loadIndexDict(r io.Reader) error {
 	idx, err := ReadIndexTable(r)
 	if err != nil {
-		return fmt.Errorf("dict initializer, Index: %v", err)
+		return fmt.Errorf("dict initializer, Index: %w", err)
 	}
 	d.Index = idx
 	return nil
@@ -105,7 +106,7 @@ func (d *Dict) loadIndexDict(r io.Reader) error {
 func (d *Dict) loadConnectionDict(r io.Reader) error {
 	t, err := ReadConnectionTable(r)
 	if err != nil {
-		return fmt.Errorf("dict initializer, Connection: %v", err)
+		return fmt.Errorf("dict initializer, Connection: %w", err)
 	}
 	d.Connection = t
 	return nil
@@ -126,7 +127,7 @@ func (d *Dict) loadCharDefDict(r io.Reader) error {
 func (d *Dict) loadUnkDict(r io.Reader) error {
 	unk, err := ReadUnkDic(r)
 	if err != nil {
-		return fmt.Errorf("dic initializer, UnkDict: %v", err)
+		return fmt.Errorf("dic initializer, UnkDict: %w", err)
 	}
 	d.UnkDict = unk
 	return nil
@@ -139,22 +140,22 @@ func (d *Dict) loadDictInfo(r io.Reader) error {
 }
 
 // LoadDictFile loads a dictionary from a file.
-func LoadDictFile(path string) (d *Dict, err error) {
+func LoadDictFile(path string) (*Dict, error) {
 	r, err := zip.OpenReader(path)
 	if err != nil {
-		return d, err
+		return nil, err
 	}
-	defer r.Close()
+	defer r.Close() //nolint:errcheck
 	return Load(&r.Reader, true)
 }
 
 // LoadShrink loads a dictionary from a file without contents.
-func LoadShrink(path string) (d *Dict, err error) {
+func LoadShrink(path string) (*Dict, error) {
 	r, err := zip.OpenReader(path)
 	if err != nil {
-		return d, err
+		return nil, err
 	}
-	defer r.Close()
+	defer r.Close() //nolint:errcheck
 	return Load(&r.Reader, false)
 }
 
@@ -180,7 +181,7 @@ func Load(r *zip.Reader, full bool) (*Dict, error) {
 			continue
 		}
 		if err := loadZippedDictPart(f, &d); err != nil {
-			return nil, fmt.Errorf("%q, %v", f.Name, err)
+			return nil, fmt.Errorf("%q, %w", f.Name, err)
 		}
 	}
 	return &d, nil
@@ -233,10 +234,10 @@ func (d Dict) Save(zw *zip.Writer) error {
 		}
 		w, err := zw.Create(f)
 		if err != nil {
-			return fmt.Errorf("create file error, %q, %v", f, err)
+			return fmt.Errorf("create file error, %q, %w", f, err)
 		}
 		if err := saver(d, w); err != nil {
-			return fmt.Errorf("write error, %q, %v", f, err)
+			return fmt.Errorf("write error, %q, %w", f, err)
 		}
 	}
 	return nil
@@ -280,7 +281,7 @@ func (d Dict) saveCharDefDict(w io.Writer) error {
 		GroupList:    d.GroupList,
 	}
 	if _, err := def.WriteTo(w); err != nil {
-		return fmt.Errorf("save char def error, %v", err)
+		return fmt.Errorf("save char def error, %w", err)
 	}
 	return nil
 }
