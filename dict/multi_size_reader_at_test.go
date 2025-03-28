@@ -2,7 +2,6 @@ package dict
 
 import (
 	"bytes"
-	"errors"
 	"io"
 	"testing"
 )
@@ -14,7 +13,7 @@ func TestNewMultiSizeReaderAt(t *testing.T) {
 
 	m := MultiSizeReaderAt(b0, b1, b2)
 
-	if want, got := b0.Size()+b1.Size()+b2.Size(), m.Size(); want != got {
+	if want, got := b0.Size()+b1.Size()+b2.Size(), m.Size(); want != got{
 		t.Errorf("size: want %d, got %d", want, got)
 	}
 	p := make([]byte, 5)
@@ -39,7 +38,7 @@ func TestMultiSizeReaderAt_ReadAt(t *testing.T) {
 		)
 		p := make([]byte, m.Size()+1)
 		k, err := m.ReadAt(p, 0)
-		if want, got := io.EOF, err; !errors.Is(got, want) {
+		if want, got :=io.EOF, err; want != got{
 			t.Errorf("want %v, got %v", want, got)
 		}
 		if want, got := m.Size(), int64(k); want != got {
@@ -54,7 +53,7 @@ func TestMultiSizeReaderAt_ReadAt(t *testing.T) {
 		)
 		p := make([]byte, m.Size())
 		k, err := m.ReadAt(p, 0)
-		if want, got := error(nil), err; !errors.Is(want, got) {
+		if want, got :=error(nil), err; want != got{
 			t.Errorf("want %v, got %v", want, got)
 		}
 		if want, got := m.Size(), int64(k); want != got {
@@ -69,7 +68,7 @@ func TestMultiSizeReaderAt_ReadAt(t *testing.T) {
 		)
 		p := make([]byte, m.Size()-1)
 		k, err := m.ReadAt(p, 0)
-		if want, got := error(nil), err; !errors.Is(want, got) {
+		if want, got :=error(nil), err; want != got{
 			t.Errorf("want %v, got %v", want, got)
 		}
 		if want, got := m.Size()-1, int64(k); want != got {
@@ -84,7 +83,7 @@ func TestMultiSizeReaderAt_ReadAt(t *testing.T) {
 		)
 		p := make([]byte, len("goodbye")+2)
 		k, err := m.ReadAt(p, 4)
-		if want, got := error(nil), err; !errors.Is(want, got) {
+		if want, got :=error(nil), err; want != got{
 			t.Errorf("want %v, got %v", want, got)
 		}
 		if want, got := len(p), k; want != got {
@@ -95,3 +94,4 @@ func TestMultiSizeReaderAt_ReadAt(t *testing.T) {
 		}
 	})
 }
+

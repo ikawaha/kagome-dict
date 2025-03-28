@@ -1,7 +1,6 @@
 package builder
 
 import (
-	"errors"
 	"fmt"
 	"path/filepath"
 	"sort"
@@ -16,8 +15,8 @@ const MaxInt16 = 1<<15 - 1
 
 // Config represents the configuration of dictionary builder.
 type Config struct {
-	name       string //nolint:unused
-	src        string //nolint:unused
+	name       string
+	src        string
 	paths      []string
 	recordInfo *MorphRecordInfo
 	unkInfo    *UnkRecordInfo
@@ -49,14 +48,12 @@ func (c *Config) AddDictInfo(info *dict.Info) {
 }
 
 // Build builds a dictionary.
-//
-//nolint:gocyclo,funlen
 func Build(c *Config) (*dict.Dict, error) {
 	if c == nil {
-		return nil, errors.New("empty config")
+		return nil, fmt.Errorf("empty config")
 	}
 	if len(c.paths) == 0 {
-		return nil, errors.New("empty path")
+		return nil, fmt.Errorf("empty path")
 	}
 
 	// Morph CSV
@@ -94,7 +91,7 @@ func Build(c *Config) (*dict.Dict, error) {
 	ret.Connection.Vec = matrix.vec
 
 	// Words
-	keywords := make([]string, 0, len(records))
+	var keywords []string
 	posMap := make(dict.POSMap)
 	for _, rec := range records {
 		keywords = append(keywords, rec[c.recordInfo.SurfaceIndex])
@@ -120,7 +117,7 @@ func Build(c *Config) (*dict.Dict, error) {
 			return nil, fmt.Errorf("morph weight %d > %d, record: %v", r, MaxInt16, rec)
 		}
 
-		m := dict.Morph{LeftID: int16(l), RightID: int16(r), Weight: int16(w)} //nolint:gosec //G109: Potential Integer overflow made by strconv.Atoi result conversion to int16/32
+		m := dict.Morph{LeftID: int16(l), RightID: int16(r), Weight: int16(w)}
 		ret.Morphs = append(ret.Morphs, m)
 		ret.POSTable.POSs = append(ret.POSTable.POSs, posMap.Add(
 			rec[c.recordInfo.POSStartIndex:c.recordInfo.OtherContentsStartIndex]),
@@ -149,7 +146,7 @@ func Build(c *Config) (*dict.Dict, error) {
 	// Unk
 	unk, err := parseUnkDefFile(filepath.Join(c.paths[0], c.UnkDefFileName), c.enc, c.unkInfo, ret.CharClass)
 	if err != nil {
-		return nil, fmt.Errorf("unk file parse error, %w", err)
+		return nil, fmt.Errorf("unk file parse error, %v", err)
 	}
 	ret.UnkDict = *unk
 

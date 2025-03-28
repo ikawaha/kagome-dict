@@ -39,10 +39,10 @@ func ReadPOSTable(r io.Reader) (POSTable, error) {
 	ret := POSTable{}
 	dec := gob.NewDecoder(r)
 	if err := dec.Decode(&ret.POSs); err != nil {
-		return ret, fmt.Errorf("POSs read error, %w", err)
+		return ret, fmt.Errorf("POSs read error, %v", err)
 	}
 	if err := dec.Decode(&ret.NameList); err != nil {
-		return ret, fmt.Errorf("name list read error, %w", err)
+		return ret, fmt.Errorf("name list read error, %v", err)
 	}
 	return ret, nil
 }
@@ -66,7 +66,7 @@ func (p POSMap) add(pos string) POSID {
 		if len(p) > maxPOSID {
 			panic(fmt.Errorf("new POSID overflowed %q %d > %d", pos, len(p), maxPOSID))
 		}
-		id = POSID(len(p)) + 1 //nolint:gosec //G115: integer overflow conversion int -> int16
+		id = POSID(len(p)) + 1
 		p[pos] = id
 	}
 	return id

@@ -16,7 +16,7 @@ type UnkDict struct {
 	Contents     Contents
 }
 
-func writeMapInt32Int32(w io.Writer, m map[int32]int32) (n int64, err error) { //nolint:nonamedreturns
+func writeMapInt32Int32(w io.Writer, m map[int32]int32) (n int64, err error) {
 	keys := make([]int32, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)
@@ -44,32 +44,32 @@ func writeMapInt32Int32(w io.Writer, m map[int32]int32) (n int64, err error) { /
 }
 
 // WriteTo implements the io.WriterTo interface.
-func (u UnkDict) WriteTo(w io.Writer) (n int64, err error) { //nolint:nonamedreturns
+func (u UnkDict) WriteTo(w io.Writer) (n int64, err error) {
 	size, err := writeMapInt32Int32(w, u.Index)
 	if err != nil {
-		return n, fmt.Errorf("write index error, %w", err)
+		return n, fmt.Errorf("write index error, %v", err)
 	}
 	n += size
 	size, err = writeMapInt32Int32(w, u.IndexDup)
 	if err != nil {
-		return n, fmt.Errorf("write index dup error, %w", err)
+		return n, fmt.Errorf("write index dup error, %v", err)
 	}
 	n += size
 	size, err = u.Morphs.WriteTo(w)
 	if err != nil {
-		return n, fmt.Errorf("write morph error, %w", err)
+		return n, fmt.Errorf("write morph error, %v", err)
 	}
 	n += size
 
 	size, err = u.ContentsMeta.WriteTo(w)
 	if err != nil {
-		return n, fmt.Errorf("write contents meta, %w", err)
+		return n, fmt.Errorf("write contents meta, %v", err)
 	}
 	n += size
 
 	size, err = u.Contents.WriteTo(w)
 	if err != nil {
-		return n, fmt.Errorf("write contents error, %w", err)
+		return n, fmt.Errorf("write contents error, %v", err)
 	}
 	n += size
 
@@ -82,7 +82,7 @@ func readMapInt32Int32(r io.Reader) (map[int32]int32, error) {
 		return nil, err
 	}
 	m := make(map[int32]int32, sz)
-	for range sz {
+	for i := int64(0); i < sz; i++ {
 		var k int32
 		if err := binary.Read(r, binary.LittleEndian, &k); err != nil {
 			return nil, err
@@ -101,12 +101,12 @@ func ReadUnkDic(r io.Reader) (UnkDict, error) {
 	d := UnkDict{}
 	ui, err := readMapInt32Int32(r)
 	if err != nil {
-		return d, fmt.Errorf("index: %w", err)
+		return d, fmt.Errorf("Index: %v", err)
 	}
 	d.Index = ui
 	ud, err := readMapInt32Int32(r)
 	if err != nil {
-		return d, fmt.Errorf("index_dup: %w", err)
+		return d, fmt.Errorf("IndexDup: %v", err)
 	}
 	d.IndexDup = ud
 

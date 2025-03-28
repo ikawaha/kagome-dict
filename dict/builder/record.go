@@ -31,7 +31,7 @@ type UnkRecordInfo struct {
 	CategoryIndex           int
 	LeftIDIndex             int
 	RightIndex              int
-	WeightIndex             int
+	WeigthIndex             int
 	POSStartIndex           int
 	OtherContentsStartIndex int
 }
@@ -52,13 +52,13 @@ func parseCSVFiles(path string, enc encoding.Encoding, colSize int) (Records, er
 	}
 	paths, err := filepath.Glob(path + "/*.csv")
 	if err != nil {
-		return nil, fmt.Errorf("path expansion error, %w", err)
+		return nil, fmt.Errorf("path expansion error, %v", err)
 	}
 	var records Records
 	for _, v := range paths {
 		rec, err := parseCSVFile(v, enc, colSize)
 		if err != nil {
-			return nil, fmt.Errorf("read error, %q, %w", v, err)
+			return nil, fmt.Errorf("read error, %q, %v", v, err)
 		}
 		records = append(records, rec...)
 	}
@@ -66,7 +66,7 @@ func parseCSVFiles(path string, enc encoding.Encoding, colSize int) (Records, er
 }
 
 func parseCSVFile(path string, enc encoding.Encoding, colSize int) (Records, error) {
-	f, err := os.Open(filepath.Clean(path))
+	f, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}

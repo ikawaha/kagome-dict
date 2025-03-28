@@ -15,19 +15,20 @@ func Test_ConnectionTableAt(t *testing.T) {
 	ct.Row = row
 	ct.Col = col
 	ct.Vec = make([]int16, ct.Row*ct.Col)
-	for i := range row {
-		for j := range col {
+	for i := 0; i < row; i++ {
+		for j := 0; j < col; j++ {
 			ct.Vec[i+j*row] = int16(i + j*row)
 		}
 	}
-	for i := range row {
-		for j := range col {
+	for i := 0; i < row; i++ {
+		for j := 0; j < col; j++ {
 			expected := int16(i + j*row)
 			if r := ct.At(i, j); r != expected {
 				t.Errorf("got %v, expected %v", r, expected)
 			}
 		}
 	}
+
 }
 
 func Test_ConnectionTableWriteTo(t *testing.T) {

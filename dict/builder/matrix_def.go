@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 )
@@ -18,7 +17,7 @@ type MatrixDef struct {
 }
 
 func parseMatrixDefFile(path string) (*MatrixDef, error) {
-	file, err := os.Open(filepath.Clean(path))
+	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
@@ -36,11 +35,11 @@ func parseMatrix(r io.Reader) (*MatrixDef, error) {
 	}
 	rowSize, err := strconv.ParseInt(dim[0], 10, 0)
 	if err != nil {
-		return nil, fmt.Errorf("invalid format: %w, %s", err, line)
+		return nil, fmt.Errorf("invalid format: %s, %s", err, line)
 	}
 	colSize, err := strconv.ParseInt(dim[1], 10, 0)
 	if err != nil {
-		return nil, fmt.Errorf("invalid format: %w, %s", err, line)
+		return nil, fmt.Errorf("invalid format: %s, %s", err, line)
 	}
 	vec := make([]int16, rowSize*colSize)
 	for scanner.Scan() {
@@ -51,7 +50,7 @@ func parseMatrix(r io.Reader) (*MatrixDef, error) {
 		}
 		row, err := strconv.ParseInt(ary[0], 10, 0)
 		if err != nil {
-			return nil, fmt.Errorf("invalid format: %w, %s", err, line)
+			return nil, fmt.Errorf("invalid format: %s, %s", err, line)
 		}
 		if row < 0 || row >= rowSize {
 			return nil, fmt.Errorf("invalid ID, right-id %d >= row size %d", row, rowSize)
@@ -59,7 +58,7 @@ func parseMatrix(r io.Reader) (*MatrixDef, error) {
 
 		col, err := strconv.ParseInt(ary[1], 10, 0)
 		if err != nil {
-			return nil, fmt.Errorf("invalid format: %w, %s", err, line)
+			return nil, fmt.Errorf("invalid format: %s, %s", err, line)
 		}
 		if col < 0 || col >= colSize {
 			return nil, fmt.Errorf("invalid ID, left-id %d >= col size %d", col, colSize)
@@ -67,12 +66,12 @@ func parseMatrix(r io.Reader) (*MatrixDef, error) {
 
 		val, err := strconv.Atoi(ary[2])
 		if err != nil {
-			return nil, fmt.Errorf("invalid format: %w, %s", err, line)
+			return nil, fmt.Errorf("invalid format: %s, %s", err, line)
 		}
-		vec[col*rowSize+row] = int16(val) //nolint:gosec //G109: Potential Integer overflow made by strconv.Atoi result conversion to int16/32
+		vec[col*rowSize+row] = int16(val) // transposed
 	}
 	if err := scanner.Err(); err != nil {
-		return nil, fmt.Errorf("invalid format: %w, %s", err, line)
+		return nil, fmt.Errorf("invalid format: %s, %s", err, line)
 	}
 	return &MatrixDef{
 		rowSize: rowSize,
