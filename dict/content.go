@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"sort"
 	"strings"
 )
@@ -27,11 +26,11 @@ const (
 // ContentsMeta represents the contents record information.
 type ContentsMeta map[string]int8
 
-func (c ContentsMeta) WriteTo(w io.Writer) (n int64, err error) {
+func (c ContentsMeta) WriteTo(w io.Writer) (n int64, err error) { //nolint:nonamedreturns
 	return writeMapStringInt8(w, c)
 }
 
-func writeMapStringInt8(w io.Writer, m map[string]int8) (n int64, err error) {
+func writeMapStringInt8(w io.Writer, m map[string]int8) (n int64, err error) { //nolint:nonamedreturns
 	keys := make([]string, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)
@@ -72,7 +71,7 @@ func readMapStringInt8(r io.Reader) (map[string]int8, error) {
 		return nil, err
 	}
 	m := make(map[string]int8, sz)
-	for i := int64(0); i < sz; i++ {
+	for range sz {
 		var x int64
 		if err := binary.Read(r, binary.LittleEndian, &x); err != nil {
 			return nil, err
@@ -95,8 +94,8 @@ func readMapStringInt8(r io.Reader) (map[string]int8, error) {
 type Contents [][]string
 
 // WriteTo implements the io.WriterTo interface.
-func (c Contents) WriteTo(w io.Writer) (n int64, err error) {
-	for i := 0; i < len(c)-1; i++ {
+func (c Contents) WriteTo(w io.Writer) (n int64, err error) { //nolint:nonamedreturns
+	for i := range len(c) - 1 {
 		x, err := fmt.Fprintf(w, "%s%s", strings.Join(c[i], colDelimiter), rowDelimiter)
 		if err != nil {
 			return n, err
@@ -126,9 +125,9 @@ func NewContents(b []byte) [][]string {
 
 // ReadContents reads dictionary contents from io.Reader.
 func ReadContents(r io.Reader) (Contents, error) {
-	buf, err := ioutil.ReadAll(r)
+	buf, err := io.ReadAll(r)
 	if err != nil {
-		return nil, fmt.Errorf("read contents error, %v", err)
+		return nil, fmt.Errorf("read contents error, %w", err)
 	}
 	return NewContents(buf), nil
 }

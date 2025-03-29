@@ -18,16 +18,16 @@ func parseUnkDefFile(path string, enc encoding.Encoding, info *UnkRecordInfo, ch
 		Index:    map[int32]int32{},
 		IndexDup: map[int32]int32{},
 		ContentsMeta: dict.ContentsMeta{
-			dict.POSStartIndex: int8(info.POSStartIndex - info.POSStartIndex),
-			dict.POSHierarchy:  int8(info.OtherContentsStartIndex - info.POSStartIndex),
+			dict.POSStartIndex: int8(0),                                                 // Start position of POS in content
+			dict.POSHierarchy:  int8(info.OtherContentsStartIndex - info.POSStartIndex), //nolint:gosec //G115: integer overflow conversion int -> int8
 		},
 	}
-	sort.Sort(Records(records))
+	sort.Sort(records)
 	for _, rec := range records {
 		categoryID := int32(-1)
 		for id, cat := range charClass {
 			if cat == rec[info.CategoryIndex] {
-				categoryID = int32(id)
+				categoryID = int32(id) //nolint:gosec //G115: integer overflow conversion int -> int32
 				break
 			}
 		}
@@ -35,7 +35,7 @@ func parseUnkDefFile(path string, enc encoding.Encoding, info *UnkRecordInfo, ch
 			return nil, fmt.Errorf("unknown unk category: %v", rec[info.CategoryIndex])
 		}
 		if _, ok := ret.Index[categoryID]; !ok {
-			ret.Index[categoryID] = int32(len(ret.Contents))
+			ret.Index[categoryID] = int32(len(ret.Contents)) //nolint:gosec //G115: integer overflow conversion int -> int32
 		} else {
 			ret.IndexDup[categoryID]++
 		}
@@ -53,14 +53,14 @@ func parseUnkDefFile(path string, enc encoding.Encoding, info *UnkRecordInfo, ch
 		if r > MaxInt16 {
 			return nil, fmt.Errorf("unk right ID %d > %d, record: %v", r, MaxInt16, rec)
 		}
-		w, err := strconv.Atoi(rec[info.WeigthIndex])
+		w, err := strconv.Atoi(rec[info.WeightIndex])
 		if err != nil {
 			return nil, err
 		}
 		if w > MaxInt16 {
 			return nil, fmt.Errorf("unk weight %d > %d, record: %v", w, MaxInt16, rec)
 		}
-		m := dict.Morph{LeftID: int16(l), RightID: int16(r), Weight: int16(w)}
+		m := dict.Morph{LeftID: int16(l), RightID: int16(r), Weight: int16(w)} //nolint:gosec //G109: Potential Integer overflow made by strconv.Atoi result conversion to int16/32
 		ret.Morphs = append(ret.Morphs, m)
 		ret.Contents = append(ret.Contents, rec[info.POSStartIndex:])
 	}

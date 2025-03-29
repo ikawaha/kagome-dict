@@ -2,6 +2,7 @@ package dict
 
 import (
 	"encoding/binary"
+	"errors"
 	"fmt"
 	"io"
 	"sort"
@@ -19,7 +20,7 @@ type IndexTable struct {
 func BuildIndexTable(sortedKeywords []string) (IndexTable, error) {
 	idx := IndexTable{Dup: map[int32]int32{}}
 	if !sort.StringsAreSorted(sortedKeywords) {
-		return idx, fmt.Errorf("unsorted keywords")
+		return idx, errors.New("unsorted keywords")
 	}
 	keys := make([]string, 0, len(sortedKeywords))
 	ids := make([]int, 0, len(sortedKeywords))
@@ -29,7 +30,7 @@ func BuildIndexTable(sortedKeywords []string) (IndexTable, error) {
 	}{}
 	for i, key := range sortedKeywords {
 		if key == prev.word {
-			idx.Dup[int32(prev.no)]++
+			idx.Dup[int32(prev.no)]++ //nolint:gosec //G115: integer overflow conversion int -> int32
 			continue
 		}
 		prev.no = i
@@ -39,7 +40,7 @@ func BuildIndexTable(sortedKeywords []string) (IndexTable, error) {
 	}
 	d, err := trie.BuildWithIDs(keys, ids)
 	if err != nil {
-		return idx, fmt.Errorf("build error, %v", err)
+		return idx, fmt.Errorf("build error, %w", err)
 	}
 	idx.Da = d
 	return idx, nil
@@ -47,10 +48,10 @@ func BuildIndexTable(sortedKeywords []string) (IndexTable, error) {
 
 // CommonPrefixSearch finds keywords sharing common prefix in an input
 // and returns the ids and it's lengths if found.
-func (idx IndexTable) CommonPrefixSearch(input string) (lens []int, ids [][]int) {
+func (idx IndexTable) CommonPrefixSearch(input string) (lens []int, ids [][]int) { //nolint:nonamedreturns
 	seeds, lens := idx.Da.CommonPrefixSearch(input)
 	for _, id := range seeds {
-		dup := idx.Dup[int32(id)]
+		dup := idx.Dup[int32(id)] //nolint:gosec //G115: integer overflow conversion int -> int32
 		list := make([]int, 1+dup)
 		for i := 0; i < len(list); i++ {
 			list[i] = id + i
@@ -64,7 +65,7 @@ func (idx IndexTable) CommonPrefixSearch(input string) (lens []int, ids [][]int)
 // and callback with id and length.
 func (idx IndexTable) CommonPrefixSearchCallback(input string, callback func(id, l int)) {
 	idx.Da.CommonPrefixSearchCallback(input, func(x, y int) {
-		dup := idx.Dup[int32(x)]
+		dup := idx.Dup[int32(x)] //nolint:gosec //G115: integer overflow conversion int -> int32
 		for i := x; i < x+int(dup)+1; i++ {
 			callback(i, y)
 		}
@@ -77,7 +78,7 @@ func (idx IndexTable) Search(input string) []int {
 	if !ok {
 		return nil
 	}
-	dup := idx.Dup[int32(id)]
+	dup := idx.Dup[int32(id)] //nolint:gosec //G115: integer overflow conversion int -> int32
 	list := make([]int, 1+dup)
 	for i := 0; i < len(list); i++ {
 		list[i] = id + i
@@ -86,7 +87,7 @@ func (idx IndexTable) Search(input string) []int {
 }
 
 // WriteTo implements the io.WriterTo interface.
-func (idx IndexTable) WriteTo(w io.Writer) (n int64, err error) {
+func (idx IndexTable) WriteTo(w io.Writer) (n int64, err error) { //nolint:nonamedreturns
 	n, err = idx.Da.WriteTo(w)
 	if err != nil {
 		return n, err
@@ -122,7 +123,7 @@ func ReadIndexTable(r io.Reader) (IndexTable, error) {
 	idx := IndexTable{}
 	d, err := trie.Read(r)
 	if err != nil {
-		return idx, fmt.Errorf("read index error, %v", err)
+		return idx, fmt.Errorf("read index error, %w", err)
 	}
 	idx.Da = d
 
@@ -131,7 +132,7 @@ func ReadIndexTable(r io.Reader) (IndexTable, error) {
 		return idx, err
 	}
 	idx.Dup = make(map[int32]int32, sz)
-	for i := int64(0); i < sz; i++ {
+	for range sz {
 		var k int32
 		if err := binary.Read(r, binary.LittleEndian, &k); err != nil {
 			return idx, err

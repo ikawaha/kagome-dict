@@ -8,12 +8,12 @@ import (
 
 func Test_BuildIndexTable(t *testing.T) {
 	sortedKeywords := []string{
-		"aaa", //0
-		"bbb", //1
-		"bbb", //2
-		"ccc", //3
-		"ddd", //4
-		"ddd", //5
+		"aaa", // 0
+		"bbb", // 1
+		"bbb", // 2
+		"ccc", // 3
+		"ddd", // 4
+		"ddd", // 5
 	}
 	idx, err := BuildIndexTable(sortedKeywords)
 	if err != nil {
@@ -45,13 +45,13 @@ func Test_BuildIndexTable(t *testing.T) {
 
 func Test_CommonPrefixSearch(t *testing.T) {
 	sortedKeywords := []string{
-		"す",    //0
-		"すし",   //1
-		"すし",   //2
-		"すし",   //3
-		"すし",   //4
-		"すしめし", //5
-		"すしめし", //6
+		"す",    // 0
+		"すし",   // 1
+		"すし",   // 2
+		"すし",   // 3
+		"すし",   // 4
+		"すしめし", // 5
+		"すしめし", // 6
 	}
 	idx, err := BuildIndexTable(sortedKeywords)
 	if err != nil {
@@ -70,13 +70,13 @@ func Test_CommonPrefixSearch(t *testing.T) {
 
 func Test_CommonPrefixSearchCallback(t *testing.T) {
 	sortedKeywords := []string{
-		"す",    //0
-		"すし",   //1
-		"すし",   //2
-		"すし",   //3
-		"すし",   //4
-		"すしめし", //5
-		"すしめし", //6
+		"す",    // 0
+		"すし",   // 1
+		"すし",   // 2
+		"すし",   // 3
+		"すし",   // 4
+		"すしめし", // 5
+		"すしめし", // 6
 	}
 	expected := []struct {
 		id, l int
@@ -108,13 +108,13 @@ func Test_CommonPrefixSearchCallback(t *testing.T) {
 
 func Test_Search(t *testing.T) {
 	sortedKeywords := []string{
-		"す",    //0
-		"すし",   //1
-		"すし",   //2
-		"すし",   //3
-		"すし",   //4
-		"すしめし", //5
-		"すしめし", //6
+		"す",    // 0
+		"すし",   // 1
+		"すし",   // 2
+		"すし",   // 3
+		"すし",   // 4
+		"すしめし", // 5
+		"すしめし", // 6
 	}
 	idx, err := BuildIndexTable(sortedKeywords)
 	if err != nil {
@@ -138,13 +138,13 @@ func Test_Search(t *testing.T) {
 
 func Test_IndexTableReadAndWrite(t *testing.T) {
 	sortedKeywords := []string{
-		"す",    //0
-		"すし",   //1
-		"すし",   //2
-		"すし",   //3
-		"すし",   //4
-		"すしめし", //5
-		"すしめし", //6
+		"す",    // 0
+		"すし",   // 1
+		"すし",   // 2
+		"すし",   // 3
+		"すし",   // 4
+		"すしめし", // 5
+		"すしめし", // 6
 	}
 	org, err := BuildIndexTable(sortedKeywords)
 	if err != nil {
@@ -168,5 +168,4 @@ func Test_IndexTableReadAndWrite(t *testing.T) {
 	if !reflect.DeepEqual(org, cpy) {
 		t.Errorf("got %v, expected %v", cpy, org)
 	}
-
 }
