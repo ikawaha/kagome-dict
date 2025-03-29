@@ -84,4 +84,5 @@ func Test_POSTableReadAndWrite(t *testing.T) {
 	if !reflect.DeepEqual(org, cpy) {
 		t.Errorf("got %v, expected %v", cpy, org)
 	}
+
 }

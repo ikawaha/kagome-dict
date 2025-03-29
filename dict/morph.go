@@ -14,7 +14,7 @@ type Morph struct {
 type Morphs []Morph
 
 // WriteTo implements the io.WriterTo interface.
-func (m Morphs) WriteTo(w io.Writer) (n int64, err error) { //nolint:nonamedreturns
+func (m Morphs) WriteTo(w io.Writer) (n int64, err error) {
 	l := int64(len(m))
 	if err := binary.Write(w, binary.LittleEndian, l); err != nil {
 		return n, err

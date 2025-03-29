@@ -46,7 +46,7 @@ var (
 		CategoryIndex:           0,
 		LeftIDIndex:             1,
 		RightIndex:              2,
-		WeightIndex:             3,
+		WeigthIndex:             3,
 		POSStartIndex:           4,
 		OtherContentsStartIndex: 8,
 	}

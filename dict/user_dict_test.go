@@ -101,6 +101,7 @@ func Test_NewUserDicRecords(t *testing.T) {
 		} else if !reflect.DeepEqual(udict.Contents[ids[0]].Tokens, []string{"朝青龍"}) {
 			t.Errorf("got %+v, expected %+v", udict.Contents[ids[0]].Tokens, []string{"朝青龍"})
 		}
+
 	})
 	t.Run("from struct", func(t *testing.T) {
 		r := UserDictRecords{

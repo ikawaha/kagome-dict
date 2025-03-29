@@ -9,7 +9,6 @@ import (
 )
 
 func newTestDict(t *testing.T) *Dict {
-	t.Helper()
 	idx, err := BuildIndexTable([]string{"key1", "key2", "key3"})
 	if err != nil {
 		t.Fatalf("build index table failed, %v", err)

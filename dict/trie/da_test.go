@@ -78,13 +78,13 @@ func Test_DaBuildAndCommonPrefixSearchBuildEmptySlice(t *testing.T) {
 
 func Test_DaBuildAndCommonPrefixSearch(t *testing.T) {
 	keywords := []string{
-		"電気通信",      // 1
-		"電気",        // 2
-		"電気通信大学",    // 3
-		"電気通信大学院大学", // 4
-		"電気通信大学大学院", // 5
-		"電気通信大学大学院電気通信学研究科", // 6
-		"電気通信大学電気通信学部",      // 7
+		"電気通信",      //1
+		"電気",        //2
+		"電気通信大学",    //3
+		"電気通信大学院大学", //4
+		"電気通信大学大学院", //5
+		"電気通信大学大学院電気通信学研究科", //6
+		"電気通信大学電気通信学部",      //7
 	}
 	d, err := Build(keywords)
 	if err != nil {
@@ -147,13 +147,13 @@ func Test_DaBuildAndCommonPrefixSearchCallbackBuildEmptySlice(t *testing.T) {
 
 func Test_DaBuildAndCommonPrefixSearchCallback(t *testing.T) {
 	keywords := []string{
-		"電気通信",      // 1
-		"電気",        // 2
-		"電気通信大学",    // 3
-		"電気通信大学院大学", // 4
-		"電気通信大学大学院", // 5
-		"電気通信大学大学院電気通信学研究科", // 6
-		"電気通信大学電気通信学部",      // 7
+		"電気通信",      //1
+		"電気",        //2
+		"電気通信大学",    //3
+		"電気通信大学院大学", //4
+		"電気通信大学大学院", //5
+		"電気通信大学大学院電気通信学研究科", //6
+		"電気通信大学電気通信学部",      //7
 	}
 	d, err := Build(keywords)
 	if err != nil {
@@ -265,13 +265,13 @@ func Test_DaBuildAndPrefixSearchBuildEmptySlice(t *testing.T) {
 
 func Test_DaBuildAndPrefixSearch(t *testing.T) {
 	keywords := []string{
-		"電気",           // 1
-		"電気通信",         // 2
-		"電気通信大学",       // 3
-		"電気通信大学院大学",    // 4
-		"電気通信大学大学院",    // 5
-		"電気通信大学電気通信学部", // 6
-		"電気通信大学大学院電気通信学研究科", // 7
+		"電気",           //1
+		"電気通信",         //2
+		"電気通信大学",       //3
+		"電気通信大学院大学",    //4
+		"電気通信大学大学院",    //5
+		"電気通信大学電気通信学部", //6
+		"電気通信大学大学院電気通信学研究科", //7
 	}
 
 	d, err := Build(keywords)
@@ -279,7 +279,7 @@ func Test_DaBuildAndPrefixSearch(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	expected := 7 // 電気通信大学大学院電気通信学研究科
+	expected := 7 //電気通信大学大学院電気通信学研究科
 	id, ok := d.PrefixSearch("電気通信大学大学院電気通信学研究科")
 	if !ok {
 		t.Fatalf("cannot search the prefix. id=%v, %v\n", id, expected)
@@ -347,13 +347,13 @@ func Test_DaTorture(t *testing.T) {
 
 func Test_ReadAndWrite(t *testing.T) {
 	keywords := []string{
-		"電気",           // 1
-		"電気通信",         // 2
-		"電気通信大学",       // 3
-		"電気通信大学院大学",    // 4
-		"電気通信大学大学院",    // 5
-		"電気通信大学電気通信学部", // 6
-		"電気通信大学大学院電気通信学研究科", // 7
+		"電気",           //1
+		"電気通信",         //2
+		"電気通信大学",       //3
+		"電気通信大学院大学",    //4
+		"電気通信大学大学院",    //5
+		"電気通信大学電気通信学部", //6
+		"電気通信大学大学院電気通信学研究科", //7
 	}
 
 	org, err := Build(keywords)
