@@ -1,0 +1,5 @@
+dist
+*.dump
+*.sqlite
+ipa/tool/mecab-ipadic-2.7.0-20070801
+uni/tool/unidic-mecab-2.1.2_src
