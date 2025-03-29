@@ -10,7 +10,7 @@ replace (
 )
 
 require (
-	github.com/ikawaha/kagome-dict v1.0.10
+	github.com/ikawaha/kagome-dict v1.1.2
 	github.com/ikawaha/kagome-dict/ipa v1.0.11
 	golang.org/x/text v0.23.0
 )
