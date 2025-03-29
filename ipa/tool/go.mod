@@ -9,5 +9,6 @@ replace (
 
 require (
 	github.com/ikawaha/kagome-dict v1.1.2
+	github.com/ikawaha/kagome-dict/ipa v1.2.1
 	golang.org/x/text v0.23.0
 )
