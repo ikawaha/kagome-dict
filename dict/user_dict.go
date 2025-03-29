@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"sort"
 	"strings"
 )
@@ -27,7 +28,7 @@ type UserDict struct {
 
 // NewUserDict build a user dictionary from a file.
 func NewUserDict(path string) (*UserDict, error) {
-	f, err := os.Open(path)
+	f, err := os.Open(filepath.Clean(path))
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +71,7 @@ func NewUserDicRecords(r io.Reader) (UserDictRecords, error) {
 		return nil, err
 	}
 
-	var records UserDictRecords
+	records := make(UserDictRecords, 0, len(text))
 	for _, line := range text {
 		vec := strings.Split(line, ",")
 		if len(vec) != UserDictColumnSize {

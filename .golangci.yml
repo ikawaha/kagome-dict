@@ -10,6 +10,7 @@ linters:
     - gochecknoglobals # Allow global variables
     - gocognit    # Use gocyclo instead
     - godot       # Allow comment end not in period
+    - gomoddirectives # This tool does not work correctly
     - lll         # Allow long lines
     - mnd         # Allow magic number
     - nlreturn    # Allow returning with no blank line before
