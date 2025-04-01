@@ -1,9 +1,9 @@
 module github.com/ikawaha/kagome-dict/uni
 
-go 1.24.1
+go 1.23.0
 
-require github.com/ikawaha/kagome-dict v1.1.5
+require github.com/ikawaha/kagome-dict v1.1.6
 
 //replace github.com/ikawaha/kagome-dict => ../
 
-retract v1.1.2 // Bug in dictionary lookup.
+retract v1.2.3 // Bug in dictionary lookup.
