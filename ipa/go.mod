@@ -1,8 +1,8 @@
 module github.com/ikawaha/kagome-dict/ipa
 
-go 1.24.0
+go 1.26.0
 
-require github.com/ikawaha/kagome-dict v1.1.7
+require github.com/ikawaha/kagome-dict v1.1.8
 
 //replace github.com/ikawaha/kagome-dict => ../
 
