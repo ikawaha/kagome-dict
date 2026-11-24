@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"sort"
 
 	"github.com/ikawaha/kagome-dict/dict/trie"
@@ -14,6 +15,44 @@ import (
 type IndexTable struct {
 	Da  trie.DoubleArray
 	Dup map[int32]int32
+
+	// dup is Dup as a dense slice indexed by id, built by BuildIndexTable and
+	// ReadIndexTable for fast lookups. It is nil when Dup has a key or value
+	// that does not fit, and then lookups read Dup. Call RebuildDupCache after
+	// changing Dup directly.
+	dup []uint8
+}
+
+// RebuildDupCache rebuilds the lookup table of Dup. Call it after changing
+// Dup directly.
+func (idx *IndexTable) RebuildDupCache() {
+	idx.dup = nil
+	if len(idx.Dup) == 0 {
+		return
+	}
+	var maxKey int32
+	for k, v := range idx.Dup {
+		if k < 0 || v < 0 || v > math.MaxUint8 {
+			return
+		}
+		maxKey = max(maxKey, k)
+	}
+	dup := make([]uint8, int(maxKey)+1)
+	for k, v := range idx.Dup {
+		dup[k] = uint8(v) //nolint:gosec // G115: checked above
+	}
+	idx.dup = dup
+}
+
+// dupOf returns the number of the entries after id that share its keyword.
+func (idx *IndexTable) dupOf(id int) int {
+	if idx.dup != nil {
+		if uint(id) < uint(len(idx.dup)) {
+			return int(idx.dup[id])
+		}
+		return 0
+	}
+	return int(idx.Dup[int32(id)]) //nolint:gosec //G115: integer overflow conversion int -> int32
 }
 
 // BuildIndexTable constructs a index table from keywords.
@@ -43,6 +82,7 @@ func BuildIndexTable(sortedKeywords []string) (IndexTable, error) {
 		return idx, fmt.Errorf("build error, %w", err)
 	}
 	idx.Da = d
+	idx.RebuildDupCache()
 	return idx, nil
 }
 
@@ -51,7 +91,7 @@ func BuildIndexTable(sortedKeywords []string) (IndexTable, error) {
 func (idx IndexTable) CommonPrefixSearch(input string) (lens []int, ids [][]int) { //nolint:nonamedreturns
 	seeds, lens := idx.Da.CommonPrefixSearch(input)
 	for _, id := range seeds {
-		dup := idx.Dup[int32(id)] //nolint:gosec //G115: integer overflow conversion int -> int32
+		dup := idx.dupOf(id)
 		list := make([]int, 1+dup)
 		for i := 0; i < len(list); i++ {
 			list[i] = id + i
@@ -65,8 +105,8 @@ func (idx IndexTable) CommonPrefixSearch(input string) (lens []int, ids [][]int)
 // and callback with id and length.
 func (idx IndexTable) CommonPrefixSearchCallback(input string, callback func(id, l int)) {
 	idx.Da.CommonPrefixSearchCallback(input, func(x, y int) {
-		dup := idx.Dup[int32(x)] //nolint:gosec //G115: integer overflow conversion int -> int32
-		for i := x; i < x+int(dup)+1; i++ {
+		dup := idx.dupOf(x)
+		for i := x; i < x+dup+1; i++ {
 			callback(i, y)
 		}
 	})
@@ -78,7 +118,7 @@ func (idx IndexTable) Search(input string) []int {
 	if !ok {
 		return nil
 	}
-	dup := idx.Dup[int32(id)] //nolint:gosec //G115: integer overflow conversion int -> int32
+	dup := idx.dupOf(id)
 	list := make([]int, 1+dup)
 	for i := 0; i < len(list); i++ {
 		list[i] = id + i
@@ -143,6 +183,7 @@ func ReadIndexTable(r io.Reader) (IndexTable, error) {
 		}
 		idx.Dup[k] = v
 	}
+	idx.RebuildDupCache()
 
 	return idx, nil
 }
